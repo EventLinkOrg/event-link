@@ -33,8 +33,8 @@ public class SecurityConfiguration {
     http
         .csrf()
         .disable()
-            .exceptionHandling()
-            .authenticationEntryPoint(authEntryPoint).and()
+        .exceptionHandling()
+        .authenticationEntryPoint(authEntryPoint).and()
         .authorizeHttpRequests()
         .requestMatchers("/api/v1/auth/**")
         .permitAll()

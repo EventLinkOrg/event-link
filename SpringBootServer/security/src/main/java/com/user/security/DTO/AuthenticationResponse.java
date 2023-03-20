@@ -1,20 +1,16 @@
-package com.user.security.auth;
+package com.user.security.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddRoleRequest {
+public class AuthenticationResponse {
 
-    private UUID userId;
-
-    private UUID roleId;
-
+  private String confirmEmail;
+  private String token;
 }

@@ -1,7 +1,7 @@
 package com.user.security.service;
 
-import com.user.security.domain.ConfirmationTokenRepository;
-import com.user.security.email.ConfirmationToken;
+import com.user.security.repository.EmailConfirmationTokenRepository;
+import com.user.security.domain.ConfirmationToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,8 +10,8 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ConfirmationTokenService {
-    private final ConfirmationTokenRepository confirmationTokenRepository;
+public class EmailConfirmationTokenService {
+    private final EmailConfirmationTokenRepository confirmationTokenRepository;
 
     public Optional<ConfirmationToken> getToken(String token) {
         return confirmationTokenRepository.findByToken(token);

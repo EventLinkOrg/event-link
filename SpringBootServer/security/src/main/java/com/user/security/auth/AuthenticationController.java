@@ -1,10 +1,12 @@
 package com.user.security.auth;
 
+import com.user.security.DTO.AddRoleRequest;
+import com.user.security.DTO.AuthenticationRequest;
+import com.user.security.DTO.AuthenticationResponse;
+import com.user.security.DTO.RegisterRequest;
 import com.user.security.domain.Role;
-import com.user.security.domain.AppUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,13 +23,13 @@ public class AuthenticationController {
     return service.confirmToken(token);
   }
 
-  @PostMapping("/users/roles")
-  public ResponseEntity<?> addRoleToUser(
-          @RequestBody AddRoleRequest request
-  ) {
-    service.addRoleToUser(request);
-    return ResponseEntity.ok().build();
-  }
+//  @PostMapping("/users/roles")
+//  public ResponseEntity<?> addRoleToUser(
+//          @RequestBody AddRoleRequest request
+//  ) {
+//    service.addRoleToUser(request);
+//    return ResponseEntity.ok().build();
+//  }
 
   @PostMapping("/register")
   public ResponseEntity<AuthenticationResponse> register(
@@ -42,15 +44,15 @@ public class AuthenticationController {
     return ResponseEntity.ok(service.authenticate(request));
   }
 
-  @PostMapping("/roles")
-  public ResponseEntity<Role> addRole(
-          @RequestBody String request
-  ) {
-    return ResponseEntity.ok(service.addRole(request));
-  }
+//  @PostMapping("/roles")
+//  public ResponseEntity<Role> addRole(
+//          @RequestBody String request
+//  ) {
+//    return ResponseEntity.ok(service.addRole(request));
+//  }
 
-  @GetMapping("/roles")
-  public ResponseEntity<List<Role>> addRole() {
-    return ResponseEntity.ok(service.getRoles());
-  }
+//  @GetMapping("/roles")
+//  public ResponseEntity<List<Role>> addRole() {
+//    return ResponseEntity.ok(service.getRoles());
+//  }
 }

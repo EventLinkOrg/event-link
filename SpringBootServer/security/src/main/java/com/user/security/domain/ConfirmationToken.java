@@ -1,4 +1,4 @@
-package com.user.security.email;
+package com.user.security.domain;
 
 import com.user.security.domain.AppUser;
 import jakarta.persistence.*;

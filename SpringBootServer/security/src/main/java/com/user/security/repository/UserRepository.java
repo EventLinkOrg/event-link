@@ -1,8 +1,9 @@
-package com.user.security.domain;
+package com.user.security.repository;
 
 import java.util.Optional;
 import java.util.UUID;
 
+import com.user.security.domain.AppUser;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

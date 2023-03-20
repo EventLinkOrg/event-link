@@ -1,12 +1,16 @@
 package com.user.security.auth;
 
+import com.user.security.DTO.AuthenticationRequest;
+import com.user.security.DTO.AuthenticationResponse;
+import com.user.security.DTO.RegisterRequest;
 import com.user.security.config.JwtService;
 import com.user.security.domain.*;
-import com.user.security.email.ConfirmationToken;
+import com.user.security.domain.ConfirmationToken;
 import com.user.security.email.EmailBuilder;
 import com.user.security.email.EmailSender;
-import com.user.security.email.EmailService;
-import com.user.security.service.ConfirmationTokenService;
+import com.user.security.repository.RoleRepository;
+import com.user.security.repository.UserRepository;
+import com.user.security.service.EmailConfirmationTokenService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +33,7 @@ import java.util.stream.Collectors;
 public class AuthenticationService {
   private final UserRepository userRepository;
 
-  private final RoleRepository roleRepository;
-
-  private final ConfirmationTokenService confirmationTokenService;
+  private final EmailConfirmationTokenService confirmationTokenService;
 
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
@@ -91,53 +93,6 @@ public class AuthenticationService {
     return AuthenticationResponse.builder()
         .token(jwtToken)
         .build();
-  }
-
-  public void addRoleToUser(AddRoleRequest addRoleRequest){
-
-    AppUser user = userRepository.findById(addRoleRequest.getUserId())
-            .orElseThrow(()->new UsernameNotFoundException("User not found"));
-
-    Role role = roleRepository.findById(addRoleRequest.getRoleId())
-            .orElseThrow(()->new UsernameNotFoundException("Role not found"));
-
-    user.getRoles().add(role);
-
-  }
-
-  public AppUser getUser(String email){
-    AppUser user = userRepository.findByEmail(email)
-            .orElseThrow(()->new UsernameNotFoundException("User not found"));
-    return AppUser.builder()
-            .id(user.getId())
-            .firstname(user.getFirstname())
-            .lastname(user.getLastname())
-            .email(user.getEmail())
-            .roles(user.getRoles())
-            .build();
-  }
-
-  public List<AppUser> getUsers(){
-    List<AppUser> users = userRepository.findAll();
-    return users.stream().map(user -> AppUser.builder()
-            .id(user.getId())
-            .firstname(user.getFirstname())
-            .lastname(user.getLastname())
-            .email(user.getEmail())
-            .roles(user.getRoles())
-            .build()).collect(Collectors.toList());
-  }
-
-  public Role addRole(String roleName){
-    //todo check if the role exists
-    Role role = Role.builder()
-            .name(roleName)
-            .build();
-    return roleRepository.save(role);
-  }
-
-  public List<Role> getRoles(){
-    return roleRepository.findAll();
   }
 
   @Transactional

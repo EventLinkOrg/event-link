@@ -1,6 +1,6 @@
-package com.user.security.domain;
+package com.user.security.repository;
 
-import com.user.security.email.ConfirmationToken;
+import com.user.security.domain.ConfirmationToken;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 
-public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationToken, UUID> {
+public interface EmailConfirmationTokenRepository extends JpaRepository<ConfirmationToken, UUID> {
 
     Optional<ConfirmationToken> findByToken(String token);
 

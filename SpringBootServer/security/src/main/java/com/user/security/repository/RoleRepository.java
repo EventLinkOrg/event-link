@@ -1,5 +1,6 @@
-package com.user.security.domain;
+package com.user.security.repository;
 
+import com.user.security.domain.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,6 +1,6 @@
 package com.user.security.config;
 
-import com.user.security.domain.UserRepository;
+import com.user.security.repository.UserRepository;
 import com.user.security.security.JwtAuthEntryPoint;
 import com.user.security.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -9,15 +9,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.authorization.AuthorizationDecision;
-import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.function.Supplier;
 
 @Configuration
 @RequiredArgsConstructor
