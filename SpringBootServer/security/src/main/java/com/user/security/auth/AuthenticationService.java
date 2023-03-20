@@ -2,17 +2,21 @@ package com.user.security.auth;
 
 import com.user.security.config.JwtService;
 import com.user.security.domain.*;
+import com.user.security.email.ConfirmationToken;
+import com.user.security.email.EmailBuilder;
+import com.user.security.email.EmailSender;
+import com.user.security.email.EmailService;
+import com.user.security.service.ConfirmationTokenService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -27,22 +31,47 @@ public class AuthenticationService {
 
   private final RoleRepository roleRepository;
 
+  private final ConfirmationTokenService confirmationTokenService;
+
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
 
+  private final EmailSender emailSender;
+
   public AuthenticationResponse register(RegisterRequest request) {
     //todo check if the user exists
-    var user = User.builder()
+    var user = AppUser.builder()
         .firstname(request.getFirstname())
         .lastname(request.getLastname())
         .email(request.getEmail())
         .password(passwordEncoder.encode(request.getPassword()))
+        .enabled(false)
+        .locked(false)
         .build();
-    userRepository.save(user);
+    AppUser savedUser = userRepository.save(user);
+    //todo send the confirmation token
+
+    String tokenEmail = UUID.randomUUID().toString();
+
+    ConfirmationToken confirmationToken = ConfirmationToken.builder()
+            .token(tokenEmail)
+            .createdAt(LocalDateTime.now())
+            .expiresAt(LocalDateTime.now().plusMinutes(15))
+            .user(savedUser)
+            .build();
+    confirmationTokenService.saveConfirmationToken(confirmationToken);
+    //todo send email
+    String link = "http://localhost:8080/api/v1/auth/confirm?token=" + tokenEmail;
+    emailSender.send(request.getEmail(),
+            EmailBuilder.buildEmail(
+                    request.getFirstname(),
+                    link
+                    ));
     //todo when registering the user add to the user the most basic role
     var jwtToken = jwtService.generateToken(user);
     return AuthenticationResponse.builder()
+            .confirmEmail(tokenEmail)
         .token(jwtToken)
         .build();
   }
@@ -66,7 +95,7 @@ public class AuthenticationService {
 
   public void addRoleToUser(AddRoleRequest addRoleRequest){
 
-    User user = userRepository.findById(addRoleRequest.getUserId())
+    AppUser user = userRepository.findById(addRoleRequest.getUserId())
             .orElseThrow(()->new UsernameNotFoundException("User not found"));
 
     Role role = roleRepository.findById(addRoleRequest.getRoleId())
@@ -76,10 +105,10 @@ public class AuthenticationService {
 
   }
 
-  public User getUser(String email){
-    User user = userRepository.findByEmail(email)
+  public AppUser getUser(String email){
+    AppUser user = userRepository.findByEmail(email)
             .orElseThrow(()->new UsernameNotFoundException("User not found"));
-    return User.builder()
+    return AppUser.builder()
             .id(user.getId())
             .firstname(user.getFirstname())
             .lastname(user.getLastname())
@@ -88,9 +117,9 @@ public class AuthenticationService {
             .build();
   }
 
-  public List<User> getUsers(){
-    List<User> users = userRepository.findAll();
-    return users.stream().map(user -> User.builder()
+  public List<AppUser> getUsers(){
+    List<AppUser> users = userRepository.findAll();
+    return users.stream().map(user -> AppUser.builder()
             .id(user.getId())
             .firstname(user.getFirstname())
             .lastname(user.getLastname())
@@ -110,4 +139,28 @@ public class AuthenticationService {
   public List<Role> getRoles(){
     return roleRepository.findAll();
   }
+
+  @Transactional
+  public String confirmToken(String token) {
+    ConfirmationToken confirmationToken = confirmationTokenService
+            .getToken(token)
+            .orElseThrow(() ->
+                    new IllegalStateException("token not found"));
+
+    if (confirmationToken.getConfirmedAt() != null) {
+      throw new IllegalStateException("email already confirmed");
+    }
+
+    LocalDateTime expiredAt = confirmationToken.getExpiresAt();
+
+    if (expiredAt.isBefore(LocalDateTime.now())) {
+      throw new IllegalStateException("token expired");
+    }
+
+    confirmationTokenService.setConfirmedAt(token);
+    userRepository.enableAppUser(
+            confirmationToken.getUser().getEmail());
+    return "confirmed";
+  }
+
 }

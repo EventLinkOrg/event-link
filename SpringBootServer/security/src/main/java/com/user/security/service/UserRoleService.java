@@ -1,4 +1,5 @@
 package com.user.security.service;
 
-public class UserService {
+public class UserRoleService {
+
 }

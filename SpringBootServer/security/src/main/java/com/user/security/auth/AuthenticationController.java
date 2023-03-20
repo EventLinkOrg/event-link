@@ -1,7 +1,7 @@
 package com.user.security.auth;
 
 import com.user.security.domain.Role;
-import com.user.security.domain.User;
+import com.user.security.domain.AppUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,7 +16,10 @@ public class AuthenticationController {
 
   private final AuthenticationService service;
 
-
+  @GetMapping("/confirm")
+  public String confirm(@RequestParam("token") String token){
+    return service.confirmToken(token);
+  }
 
   @PostMapping("/users/roles")
   public ResponseEntity<?> addRoleToUser(
