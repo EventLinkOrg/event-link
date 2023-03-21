@@ -1,8 +1,8 @@
-package com.user.security.other;
+package com.user.security.auth;
 
-import com.user.security.auth.AuthenticationService;
 import com.user.security.domain.Role;
 import com.user.security.domain.AppUser;
+import com.user.security.service.UserRoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,8 +14,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/secured")
 @RequiredArgsConstructor
-public class OtherController {
-    private final AuthenticationService service;
+public class UserRoleController {
+    private final UserRoleService service;
 
 
     @PreAuthorize("hasAuthority('hello')")

@@ -1,6 +1,7 @@
 package com.user.security.service;
 
 import com.user.security.DTO.AddRoleRequest;
+import com.user.security.DTO.UserUpdateRequest;
 import com.user.security.domain.AppUser;
 import com.user.security.domain.Role;
 import com.user.security.repository.RoleRepository;
@@ -65,6 +66,10 @@ public class UserRoleService {
                 .name(roleName)
                 .build();
         return roleRepository.save(role);
+    }
+
+    public void updateUser(UserUpdateRequest request){
+
     }
 
 }

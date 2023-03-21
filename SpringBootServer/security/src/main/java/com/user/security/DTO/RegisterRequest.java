@@ -1,9 +1,7 @@
 package com.user.security.DTO;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+//import org.springframework.lang.NonNull;
 
 @Data
 @Builder
@@ -11,8 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RegisterRequest {
 
+  @NonNull
   private String firstname;
   private String lastname;
+
   private String email;
   private String password;
 }

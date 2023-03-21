@@ -1,48 +1,57 @@
-package com.user.security.auth;
+package com.user.security.service;
 
 import com.user.security.DTO.AuthenticationRequest;
 import com.user.security.DTO.AuthenticationResponse;
 import com.user.security.DTO.RegisterRequest;
+import com.user.security.DTO.RegisterResponse;
 import com.user.security.config.JwtService;
 import com.user.security.domain.*;
 import com.user.security.domain.ConfirmationToken;
 import com.user.security.email.EmailBuilder;
 import com.user.security.email.EmailSender;
-import com.user.security.repository.RoleRepository;
 import com.user.security.repository.UserRepository;
-import com.user.security.service.EmailConfirmationTokenService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
 public class AuthenticationService {
+
+  @Value("${constants.email-sender.email-link}")
+  private String EMAIL_LINK;
+
   private final UserRepository userRepository;
 
   private final EmailConfirmationTokenService confirmationTokenService;
 
   private final PasswordEncoder passwordEncoder;
+
   private final JwtService jwtService;
+
   private final AuthenticationManager authenticationManager;
 
   private final EmailSender emailSender;
 
-  public AuthenticationResponse register(RegisterRequest request) {
-    //todo check if the user exists
+  public RegisterResponse register(RegisterRequest request) {
+
+    if(userRepository.findByEmail(request.getEmail()).isEmpty()){
+      throw new UsernameNotFoundException("there is an account associated with this email");
+    }
+
     var user = AppUser.builder()
         .firstname(request.getFirstname())
         .lastname(request.getLastname())
@@ -51,8 +60,8 @@ public class AuthenticationService {
         .enabled(false)
         .locked(false)
         .build();
+
     AppUser savedUser = userRepository.save(user);
-    //todo send the confirmation token
 
     String tokenEmail = UUID.randomUUID().toString();
 
@@ -62,31 +71,38 @@ public class AuthenticationService {
             .expiresAt(LocalDateTime.now().plusMinutes(15))
             .user(savedUser)
             .build();
+
+    //todo save confirmation token to redis
     confirmationTokenService.saveConfirmationToken(confirmationToken);
-    //todo send email
-    String link = "http://localhost:8080/api/v1/auth/confirm?token=" + tokenEmail;
+
     emailSender.send(request.getEmail(),
             EmailBuilder.buildEmail(
                     request.getFirstname(),
-                    link
+                    EMAIL_LINK
                     ));
+
     //todo when registering the user add to the user the most basic role
-    var jwtToken = jwtService.generateToken(user);
-    return AuthenticationResponse.builder()
-            .confirmEmail(tokenEmail)
-        .token(jwtToken)
+    return RegisterResponse.builder()
+        .confirmationEmail(tokenEmail)
         .build();
+
   }
 
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    var user = userRepository.findByEmail(request.getEmail())
+            .orElseThrow(()->new UsernameNotFoundException("This user doesn't exist"));
+
+    if(!user.getEnabled()){
+      throw new UsernameNotFoundException("Account not confirmed");
+    }
+
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
             request.getEmail(),
             request.getPassword()
         )
     );
-    var user = userRepository.findByEmail(request.getEmail())
-        .orElseThrow(()->new UsernameNotFoundException("This user doesn't exist"));
+
     var claimsMap = new HashMap<String,Object>();
     claimsMap.put("authorities", user.getAuthorities());
     var jwtToken = jwtService.generateToken(claimsMap, user);
@@ -96,7 +112,7 @@ public class AuthenticationService {
   }
 
   @Transactional
-  public String confirmToken(String token) {
+  public String confirmEmailToken(String token) {
     ConfirmationToken confirmationToken = confirmationTokenService
             .getToken(token)
             .orElseThrow(() ->
@@ -115,6 +131,7 @@ public class AuthenticationService {
     confirmationTokenService.setConfirmedAt(token);
     userRepository.enableAppUser(
             confirmationToken.getUser().getEmail());
+    
     return "confirmed";
   }
 
