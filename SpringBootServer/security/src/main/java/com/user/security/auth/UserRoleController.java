@@ -6,6 +6,7 @@ import com.user.security.service.UserRoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,9 +15,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/secured")
 @RequiredArgsConstructor
+@Validated
 public class UserRoleController {
     private final UserRoleService service;
 
+    @PutMapping
+    public ResponseEntity<?> logOut(String token){
+        service.logOut(token);
+        return ResponseEntity.ok().build();
+    }
 
     @PreAuthorize("hasAuthority('hello')")
     @GetMapping("/users")

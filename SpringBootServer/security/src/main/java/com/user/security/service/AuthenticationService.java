@@ -1,28 +1,25 @@
 package com.user.security.service;
 
-import com.user.security.DTO.AuthenticationRequest;
-import com.user.security.DTO.AuthenticationResponse;
-import com.user.security.DTO.RegisterRequest;
-import com.user.security.DTO.RegisterResponse;
+import com.user.security.DTO.*;
 import com.user.security.config.JwtService;
 import com.user.security.domain.*;
-import com.user.security.domain.ConfirmationToken;
 import com.user.security.email.EmailBuilder;
 import com.user.security.email.EmailSender;
 import com.user.security.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -34,9 +31,7 @@ public class AuthenticationService {
   @Value("${constants.email-sender.email-link}")
   private String EMAIL_LINK;
 
-  private final UserRepository userRepository;
-
-  private final EmailConfirmationTokenService confirmationTokenService;
+  private final UserRoleService userRoleService;
 
   private final PasswordEncoder passwordEncoder;
 
@@ -46,34 +41,52 @@ public class AuthenticationService {
 
   private final EmailSender emailSender;
 
+  private final RedisService redisService;
+
   public RegisterResponse register(RegisterRequest request) {
 
-    if(userRepository.findByEmail(request.getEmail()).isEmpty()){
+    //trying to get the user from the database
+    AppUser tryUser = userRoleService.getUser(request.getEmail());
+
+    //if user exists and has confirmed the account don't generate the link
+    if(tryUser != null && tryUser.getEnabled()){
       throw new UsernameNotFoundException("there is an account associated with this email");
     }
 
-    var user = AppUser.builder()
-        .firstname(request.getFirstname())
-        .lastname(request.getLastname())
-        .email(request.getEmail())
-        .password(passwordEncoder.encode(request.getPassword()))
-        .enabled(false)
-        .locked(false)
-        .build();
+    //if db fetch is empty add the user to database
+    if(tryUser == null) {
 
-    AppUser savedUser = userRepository.save(user);
+      var user = AppUser.builder()
+              .firstname(request.getFirstname())
+              .lastname(request.getLastname())
+              .email(request.getEmail())
+              .password(passwordEncoder.encode(request.getPassword()))
+              .enabled(false)
+              .locked(false)
+              .build();
 
+      Role role = userRoleService.getRole("USER");
+
+      user.setRoles(Collections.singletonList(role));
+
+      tryUser = userRoleService.save(user);
+
+    }
+
+    //then generate the token for the newly users and also for the registered db users but who haven't confirmed
     String tokenEmail = UUID.randomUUID().toString();
 
-    ConfirmationToken confirmationToken = ConfirmationToken.builder()
+    ConfirmationTokenDTO confirmationToken = ConfirmationTokenDTO.builder()
             .token(tokenEmail)
-            .createdAt(LocalDateTime.now())
-            .expiresAt(LocalDateTime.now().plusMinutes(15))
-            .user(savedUser)
+            .email(tryUser.getEmail())
             .build();
 
-    //todo save confirmation token to redis
-    confirmationTokenService.saveConfirmationToken(confirmationToken);
+    System.out.println(confirmationToken);
+    redisService.setValue(
+            tokenEmail,
+            confirmationToken,
+            redisService.EMAIL_TOKEN_LIFESPAN
+            );
 
     emailSender.send(request.getEmail(),
             EmailBuilder.buildEmail(
@@ -82,6 +95,14 @@ public class AuthenticationService {
                     ));
 
     //todo when registering the user add to the user the most basic role
+
+//    userRoleService.addRoleToUser(
+//            AddRoleRequest.builder()
+//                    .userId(tryUser.getId())
+//                    .roleId(role.getId())
+//                    .build()
+//    );
+
     return RegisterResponse.builder()
         .confirmationEmail(tokenEmail)
         .build();
@@ -89,8 +110,7 @@ public class AuthenticationService {
   }
 
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
-    var user = userRepository.findByEmail(request.getEmail())
-            .orElseThrow(()->new UsernameNotFoundException("This user doesn't exist"));
+    var user = userRoleService.findByEmail(request.getEmail());
 
     if(!user.getEnabled()){
       throw new UsernameNotFoundException("Account not confirmed");
@@ -105,7 +125,11 @@ public class AuthenticationService {
 
     var claimsMap = new HashMap<String,Object>();
     claimsMap.put("authorities", user.getAuthorities());
+
     var jwtToken = jwtService.generateToken(claimsMap, user);
+
+    redisService.setValue(jwtToken, jwtToken, redisService.AUTH_JWT_TOKEN_LIFESPAN);
+
     return AuthenticationResponse.builder()
         .token(jwtToken)
         .build();
@@ -113,26 +137,27 @@ public class AuthenticationService {
 
   @Transactional
   public String confirmEmailToken(String token) {
-    ConfirmationToken confirmationToken = confirmationTokenService
-            .getToken(token)
-            .orElseThrow(() ->
-                    new IllegalStateException("token not found"));
+    ConfirmationTokenDTO confirmationToken =
+            (ConfirmationTokenDTO) redisService.getValue(token);
 
-    if (confirmationToken.getConfirmedAt() != null) {
-      throw new IllegalStateException("email already confirmed");
-    }
-
-    LocalDateTime expiredAt = confirmationToken.getExpiresAt();
-
-    if (expiredAt.isBefore(LocalDateTime.now())) {
+    if(confirmationToken == null){
       throw new IllegalStateException("token expired");
     }
 
-    confirmationTokenService.setConfirmedAt(token);
-    userRepository.enableAppUser(
-            confirmationToken.getUser().getEmail());
+    if (confirmationToken.isConfirmed()) {
+      throw new IllegalStateException("email already confirmed");
+    }
+
+    redisService.deleteRow(token);
+
+    userRoleService.enableAppUser(
+            confirmationToken.getEmail());
     
     return "confirmed";
+
   }
 
+  public String throwException() {
+    throw new EntityNotFoundException("this is illegal");
+  }
 }

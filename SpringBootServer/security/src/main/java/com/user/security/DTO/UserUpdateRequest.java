@@ -12,8 +12,9 @@ import lombok.NoArgsConstructor;
 public class UserUpdateRequest {
 
     private String firstname;
+
     private String lastname;
-    private String email;
+
     private String password;
 
     private Boolean enabled;
