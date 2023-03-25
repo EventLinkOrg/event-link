@@ -31,9 +31,9 @@ public class AppUser implements UserDetails {
   private String email;
   private String password;
 
-  private Boolean enabled;
+  private boolean enabled;
 
-  private Boolean locked;
+  private boolean locked;
 
   @ManyToMany(fetch = FetchType.EAGER)
   private Collection<Role> roles = new ArrayList<>();

@@ -20,14 +20,14 @@ public class EmailService implements EmailSender{
 
     @Override
     @Async
-    public void send(String to, String email) {
+    public void send(String to, String from, String email) {
         try{
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
             helper.setText(email, true);
             helper.setTo(to);
             helper.setSubject("Confirm your email");
-            helper.setFrom("eventlifenotification@gmail.com");
+            helper.setFrom(from);
             mailSender.send(message);
         }catch(MessagingException e){
             LOGGER.error("failed to send email", e);

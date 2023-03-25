@@ -5,7 +5,6 @@ import com.user.security.config.JwtService;
 import com.user.security.domain.*;
 import com.user.security.email.EmailBuilder;
 import com.user.security.email.EmailSender;
-import com.user.security.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -30,6 +28,9 @@ public class AuthenticationService {
 
   @Value("${constants.email-sender.email-link}")
   private String EMAIL_LINK;
+
+  @Value("${spring.mail.username}")
+  private String EMAIL_ACC;
 
   private final UserRoleService userRoleService;
 
@@ -49,8 +50,9 @@ public class AuthenticationService {
     AppUser tryUser = userRoleService.getUser(request.getEmail());
 
     //if user exists and has confirmed the account don't generate the link
-    if(tryUser != null && tryUser.getEnabled()){
-      throw new UsernameNotFoundException("there is an account associated with this email");
+    if(tryUser != null ){
+      System.out.println(tryUser);
+      if(tryUser.isEnabled()) throw new UsernameNotFoundException("there is an account associated with this email");
     }
 
     //if db fetch is empty add the user to database
@@ -61,8 +63,8 @@ public class AuthenticationService {
               .lastname(request.getLastname())
               .email(request.getEmail())
               .password(passwordEncoder.encode(request.getPassword()))
-              .enabled(false)
-              .locked(false)
+              .enabled(Boolean.FALSE)
+              .locked(Boolean.TRUE)
               .build();
 
       Role role = userRoleService.getRole("USER");
@@ -89,6 +91,7 @@ public class AuthenticationService {
             );
 
     emailSender.send(request.getEmail(),
+            EMAIL_ACC,
             EmailBuilder.buildEmail(
                     request.getFirstname(),
                     EMAIL_LINK
@@ -112,7 +115,7 @@ public class AuthenticationService {
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
     var user = userRoleService.findByEmail(request.getEmail());
 
-    if(!user.getEnabled()){
+    if(!user.isEnabled()){
       throw new UsernameNotFoundException("Account not confirmed");
     }
 
