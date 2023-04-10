@@ -5,20 +5,32 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+import 'vuetify/dist/vuetify.min.css'
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
+
+
+
 
 import 'vuetify/styles/main.css'
 
 
 import './assets/main.css'
 
-const app = createApp(App)
 
 const vuetify = createVuetify({
+
+    icons: {
+        defaultSet: 'mdi',
+        aliases,
+        sets: {
+          mdi,
+        }
+      },
+
     components,
     directives,
 })
+createApp(App).use(router).use(vuetify).mount('#app')
 
-app.use(router)
-app.use(vuetify)
 
-app.mount('#app')
+
