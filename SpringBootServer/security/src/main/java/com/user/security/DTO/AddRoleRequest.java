@@ -1,20 +1,18 @@
 package com.user.security.DTO;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
 @Data
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 public class AddRoleRequest {
 
+    @NonNull
     private UUID userId;
 
+    @NonNull
     private UUID roleId;
 
 }

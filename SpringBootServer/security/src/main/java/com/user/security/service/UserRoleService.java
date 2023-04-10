@@ -1,12 +1,15 @@
 package com.user.security.service;
 
-import com.user.security.DTO.AddRoleRequest;
-import com.user.security.DTO.UserUpdateRequest;
+import com.user.security.DTO.*;
 import com.user.security.domain.AppUser;
 import com.user.security.domain.Role;
 import com.user.security.repository.RoleRepository;
 import com.user.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -24,15 +27,26 @@ public class UserRoleService {
 
     private final RedisService redisService;
 
-    public List<AppUser> getUsers(){
+    public List<AppUserResponse> getUsers(){
         List<AppUser> users = userRepository.findAll();
-        return users.stream().map(user -> AppUser.builder()
-                .id(user.getId())
-                .firstname(user.getFirstname())
-                .lastname(user.getLastname())
-                .email(user.getEmail())
-                .roles(user.getRoles())
-                .build()).collect(Collectors.toList());
+        return users.stream().map(this::entity2Dto).collect(Collectors.toList());
+    }
+
+    public PageModel<AppUserResponse> getUsers(GetUsersRequest request){
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), Sort.by(request.getSortColumn()));
+
+        if(request.getSortDirection().equals("DESC")){
+            pageable = PageRequest.of(request.getPage(), request.getSize(), Sort.by(request.getSortColumn()).descending());
+        }
+        Page<AppUser> data = userRepository.findAll(pageable);
+
+        return PageModel.<AppUserResponse>builder()
+                .page(data.getNumber())
+                .size(data.getSize())
+                .total(data.getTotalPages())
+                .sortedColumn(request.getSortColumn())
+                .data(data.stream().map(this::entity2Dto).collect(Collectors.toList()))
+                .build();
     }
 
     public List<Role> getRoles(){
@@ -52,6 +66,7 @@ public class UserRoleService {
                 .id(user.getId())
                 .firstname(user.getFirstname())
                 .lastname(user.getLastname())
+                .enabled(user.isEnabled())
                 .email(user.getEmail())
                 .roles(user.getRoles())
                 .build();
@@ -112,5 +127,17 @@ public class UserRoleService {
     public AppUser findByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(()-> new UsernameNotFoundException("User not found"));
+    }
+
+    public AppUserResponse entity2Dto(AppUser user){
+        return AppUserResponse.builder()
+                .id(user.getId())
+                .firstname(user.getFirstname())
+                .lastname(user.getLastname())
+                .email(user.getEmail())
+                .enabled(user.isEnabled())
+                .locked(user.isLocked())
+                .roles(user.getRoles())
+                .build();
     }
 }

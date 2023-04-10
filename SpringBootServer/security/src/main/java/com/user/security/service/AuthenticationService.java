@@ -52,10 +52,10 @@ public class AuthenticationService {
     //if user exists and has confirmed the account don't generate the link
     if(tryUser != null ){
       System.out.println(tryUser);
-      if(tryUser.isEnabled()) throw new UsernameNotFoundException("there is an account associated with this email");
+      if(tryUser.isEnabled()) throw new UsernameNotFoundException("There is an account associated with this email");
     }
 
-    //if db fetch is empty add the user to database
+    //if db fetch is empty add the user to database adn add the role USER
     if(tryUser == null) {
 
       var user = AppUser.builder()
@@ -96,15 +96,6 @@ public class AuthenticationService {
                     request.getFirstname(),
                     EMAIL_LINK
                     ));
-
-    //todo when registering the user add to the user the most basic role
-
-//    userRoleService.addRoleToUser(
-//            AddRoleRequest.builder()
-//                    .userId(tryUser.getId())
-//                    .roleId(role.getId())
-//                    .build()
-//    );
 
     return RegisterResponse.builder()
         .confirmationEmail(tokenEmail)
@@ -163,4 +154,5 @@ public class AuthenticationService {
   public String throwException() {
     throw new EntityNotFoundException("this is illegal");
   }
+
 }

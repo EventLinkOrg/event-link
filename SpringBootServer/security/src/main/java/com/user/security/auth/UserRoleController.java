@@ -1,5 +1,8 @@
 package com.user.security.auth;
 
+import com.user.security.DTO.AppUserResponse;
+import com.user.security.DTO.GetUsersRequest;
+import com.user.security.DTO.PageModel;
 import com.user.security.domain.Role;
 import com.user.security.domain.AppUser;
 import com.user.security.service.UserRoleService;
@@ -17,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 public class UserRoleController {
+    //In this controller will be registered the endpoints that at least will need authentication
     private final UserRoleService service;
 
     @PutMapping
@@ -25,10 +29,19 @@ public class UserRoleController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasAuthority('hello')")
+//    @PreAuthorize("hasAuthority('USER')")
+//    @GetMapping("/users")
+//    public ResponseEntity<List<AppUserResponse>> getUsers(){
+//        return ResponseEntity.ok(service.getUsers());
+//    }
+
+    @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/users")
-    public ResponseEntity<List<AppUser>> getUsers(){
-        return ResponseEntity.ok(service.getUsers());
+    public ResponseEntity<PageModel<AppUserResponse>> getUsers(
+             GetUsersRequest request
+            ){
+
+        return ResponseEntity.ok(service.getUsers(request));
     }
 
     @GetMapping("/roles")
