@@ -1,8 +1,6 @@
 package com.user.security.auth;
 
-import com.user.security.DTO.AppUserResponse;
-import com.user.security.DTO.GetUsersRequest;
-import com.user.security.DTO.PageModel;
+import com.user.security.DTO.*;
 import com.user.security.domain.Role;
 import com.user.security.domain.AppUser;
 import com.user.security.service.UserRoleService;
@@ -24,16 +22,11 @@ public class UserRoleController {
     private final UserRoleService service;
 
     @PutMapping
-    public ResponseEntity<?> logOut(String token){
-        service.logOut(token);
+    public ResponseEntity<?> logOut(
+            @RequestBody LogOutRequest request){
+        service.logOut(request);
         return ResponseEntity.ok().build();
     }
-
-//    @PreAuthorize("hasAuthority('USER')")
-//    @GetMapping("/users")
-//    public ResponseEntity<List<AppUserResponse>> getUsers(){
-//        return ResponseEntity.ok(service.getUsers());
-//    }
 
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/users")
@@ -42,6 +35,15 @@ public class UserRoleController {
             ){
 
         return ResponseEntity.ok(service.getUsers(request));
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @PostMapping("/users")
+    public ResponseEntity<?> addRoleToUser(
+            @RequestBody AddRoleRequest request
+    ){
+        service.addRoleToUser(request);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/roles")

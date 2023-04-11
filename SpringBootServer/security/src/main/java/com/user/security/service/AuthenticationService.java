@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -119,10 +120,21 @@ public class AuthenticationService {
 
     var claimsMap = new HashMap<String,Object>();
     claimsMap.put("authorities", user.getAuthorities());
+    claimsMap.put("userId", user.getId());
+
+
 
     var jwtToken = jwtService.generateToken(claimsMap, user);
 
-    redisService.setValue(jwtToken, jwtToken, redisService.AUTH_JWT_TOKEN_LIFESPAN);
+    JwtUser redisUser = JwtUser.builder()
+            .userId(user.getId())
+            .authorities(user.getAuthorities().stream().toList())
+            .sub(user.getUsername())
+            .iat(new Date(System.currentTimeMillis()))
+            .exp(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+            .build();
+
+    redisService.setValue(jwtToken, redisUser, redisService.AUTH_JWT_TOKEN_LIFESPAN);
 
     return AuthenticationResponse.builder()
         .token(jwtToken)
@@ -135,7 +147,7 @@ public class AuthenticationService {
             (ConfirmationTokenDTO) redisService.getValue(token);
 
     if(confirmationToken == null){
-      throw new IllegalStateException("token expired");
+      throw new IllegalStateException("Token expired or doesn't exist");
     }
 
     if (confirmationToken.isConfirmed()) {

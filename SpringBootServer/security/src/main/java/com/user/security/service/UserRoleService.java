@@ -86,14 +86,14 @@ public class UserRoleService {
         Role role = roleRepository.findById(addRoleRequest.getRoleId())
                 .orElseThrow(()->new UsernameNotFoundException("Role not found"));
 
-//        if(user.getRoles() != null && user.getRoles().stream()
-//                .filter(r -> r.getId().equals(role.getId()))
-//                .collect(Collectors.toList())
-//                .isEmpty()){
-//            throw new RuntimeException("role already exists");
-//        }
+        if(!user.getRoles().stream()
+                .filter(r -> r.getId().equals(role.getId()))
+                .collect(Collectors.toList())
+                .isEmpty()){
+            throw new IllegalStateException("The user has this role");
+        }
         user.getRoles().add(role);
-
+        userRepository.save(user);
     }
 
     public Role addRole(String roleName){
@@ -120,8 +120,8 @@ public class UserRoleService {
         return roleRepository.save(role);
     }
 
-    public void logOut(String token){
-        redisService.deleteRow(token);
+    public void logOut(LogOutRequest token){
+        redisService.deleteRow(token.getToken());
     }
 
     public AppUser findByEmail(String email) {
