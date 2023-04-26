@@ -1,36 +1,35 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import 'vuetify/styles'
-import { createVuetify } from 'vuetify'
-import * as components from 'vuetify/components'
-import * as directives from 'vuetify/directives'
-import 'vuetify/dist/vuetify.min.css'
-import { aliases, mdi } from 'vuetify/iconsets/mdi'
-
-
-
-
-import 'vuetify/styles/main.css'
-
-
 import './assets/main.css'
+import 'bootstrap/dist/css/bootstrap.css';
 
 
-const vuetify = createVuetify({
 
-    icons: {
-        defaultSet: 'mdi',
-        aliases,
-        sets: {
-          mdi,
-        }
-      },
+// import 'bootstrap-vue/dist/bootstrap-vue.css'
 
-    components,
-    directives,
-})
-createApp(App).use(router).use(vuetify).mount('#app')
+const app = createApp(App)
+
+
+
+
+
+app.use(router)
+app.mount('#app')
+
+createApp(App)
+  .use(router)
+  .use(BootstrapVue)
+  .use(IconsPlugin)
+  .mount('#app')
+
+// const vuetify = createVuetify({
+//     components,
+//     directives,
+// })
+// createApp(App).use(router).use(BootstrapVue).use(IconsPlugin).mount('#app')
+
+
 
 
 
