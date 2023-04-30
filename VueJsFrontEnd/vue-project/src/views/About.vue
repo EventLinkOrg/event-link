@@ -1,131 +1,69 @@
 <template>
-  <v-card class="about-us">
-    <v-card-title class="text-center">
-      <h2>About Us</h2>
-    </v-card-title>
-    <v-card-text class="content">
-      <p class="description">We are a team of passionate developers who love building amazing web applications using the latest technologies.</p>
-      <p class="description">Our mission is to help businesses achieve their goals by providing innovative solutions that deliver real results.</p>
-    </v-card-text>
+  <div class="aboutus">
+<h2>About us</h2>
 
-    <v-card
-    class="mx-auto"
-    max-width="344"
-  >
-    <v-img
-      :src="eventPic"
-      height="200px"
-      cover
-    ></v-img>
+<h3>A website app for events is a platform designed to facilitate the planning, organizing, and promotion of events such as conferences, concerts, festivals, trade shows, and other gatherings. The app typically provides a range of features and tools to help event organizers manage various aspects of the event, from ticketing and registration to scheduling, marketing, and post-event analytics.</h3>
 
-    <v-card-title>
-      Top western road trips
-    </v-card-title>
+<h3 class="popularevents">Some of most popular Events</h3>
 
-    <v-card-subtitle>
-      1,000 miles of wonder
-    </v-card-subtitle>
+<EventsCard/>
 
-    <v-card-actions>
-      <v-btn
-        color="orange-lighten-2"
-        variant="text"
-      >
-        Explore
-      </v-btn>
 
-      <v-spacer></v-spacer>
+</div>
 
-      <v-btn
-        :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-        @click="show = !show"
-      ></v-btn>
-    </v-card-actions>
 
-    <v-expand-transition>
-      <div v-show="show">
-        <v-divider></v-divider>
-
-        <v-card-text>
-          I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.
-        </v-card-text>
-      </div>
-    </v-expand-transition>
-  </v-card>
-
-  </v-card>
 </template>
 
 <script>
-import eventPic from '../assets/EventsPhoto/EventPic.jpg'
-// import { aliases, mdi } from 'vuetify/iconsets/mdi'
-
-
-
+import EventsCard from '../components/EventsCard.vue'
 
 export default {
- name: 'About',
+    name: 'About',
+    components: {
+      EventsCard,
+    }
 
-// //  icons: {
-//     defaultSet: 'mdi',
-//     aliases,
-//     sets: {
-//       mdi,
-//     }
-//   },
-
-    data(){
-        return{
-            eventPic: eventPic,
-            show: false,
-        }
-    },
-
-   
-  
+ 
 
 }
 </script>
 
 <style scoped>
-.about-us {
-  padding: 64px 0;
-}
 
-.about-us h2 {
-  font-size: 32px;
-  font-weight: bold;
-}
-.content {
-    margin-top: 50px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.description {
-  font-size: 18px;
-  line-height: 0.5;
+.popularevents{
   text-align: center;
-  margin-bottom: 32px;
+  margin-top: 100px; 
+  text-shadow: 0 0 3px #FF0000, 0 0 5px #0000FF;
 }
 
-.media {
-  position: relative;
-  padding: 0;
+  aboutus {
+    position: absolute;
+
+  
 }
 
-.event-title {
-  font-size: 36px;
-  font-weight: bold;
-  margin-bottom: 16px;
+
+h2{
+  text-align: center;
+  margin-top: 100px; 
+  text-shadow: 0 0 3px #FF0000, 0 0 5px #0000FF;
+
 }
 
-.event-description {
-  font-size: 18px;
-  line-height: 1.5;
-  margin-bottom: 32px;
+h3{
+  text-align: center;
+  margin-bottom: 50px;
+
 }
+
+@media  (min-width: 400px) {
+  aboutus{
+    margin-bottom: 800px;
+  }
+  
+}
+
+
+
 
 </style>
-
