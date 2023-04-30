@@ -1,10 +1,14 @@
 package com.user.security.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.user.security.DTO.*;
 import com.user.security.config.JwtService;
 import com.user.security.domain.*;
 import com.user.security.email.EmailBuilder;
 import com.user.security.email.EmailSender;
+import com.user.security.handler.ApiException;
+import com.user.security.handler.InternalServerError;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +20,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +50,8 @@ public class AuthenticationService {
   private final EmailSender emailSender;
 
   private final RedisService redisService;
+
+  private final ObjectMapper objectMapper;
 
   public RegisterResponse register(RegisterRequest request) {
 
@@ -104,7 +112,7 @@ public class AuthenticationService {
 
   }
 
-  public AuthenticationResponse authenticate(AuthenticationRequest request) {
+  public AuthenticationResponse authenticate(AuthenticationRequest request){
     var user = userRoleService.findByEmail(request.getEmail());
 
     if(!user.isEnabled()){
@@ -128,13 +136,18 @@ public class AuthenticationService {
 
     JwtUser redisUser = JwtUser.builder()
             .userId(user.getId())
-            .authorities(user.getAuthorities().stream().toList())
+            .authorities(user.getAuthorities().stream().collect(Collectors.toList()))
             .sub(user.getUsername())
             .iat(new Date(System.currentTimeMillis()))
             .exp(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
             .build();
 
-    redisService.setValue(jwtToken, redisUser, redisService.AUTH_JWT_TOKEN_LIFESPAN);
+    try {
+      String serializedJwtUser = objectMapper.writeValueAsString(redisUser);
+      redisService.setValue(jwtToken, serializedJwtUser, redisService.AUTH_JWT_TOKEN_LIFESPAN);
+    }catch(JsonProcessingException e){
+      throw new InternalServerError();
+    }
 
     return AuthenticationResponse.builder()
         .token(jwtToken)

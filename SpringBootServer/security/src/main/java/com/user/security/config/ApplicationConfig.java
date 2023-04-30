@@ -1,5 +1,6 @@
 package com.user.security.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.user.security.repository.UserRepository;
 import com.user.security.security.JwtAuthEntryPoint;
@@ -44,8 +45,10 @@ public class ApplicationConfig {
   }
 
   @Bean
-  JwtAuthEntryPoint authEntryPoint(){
+  public JwtAuthEntryPoint authEntryPoint(){
     return new JwtAuthEntryPoint();
   }
 
+  @Bean
+  public ObjectMapper objectMapper(){return new ObjectMapper();}
 }

@@ -37,7 +37,7 @@ public class UserRoleController {
         return ResponseEntity.ok(service.getUsers(request));
     }
 
-    @PreAuthorize("hasAuthority('USER')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/users")
     public ResponseEntity<?> addRoleToUser(
             @RequestBody AddRoleRequest request

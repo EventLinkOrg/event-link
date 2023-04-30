@@ -1,0 +1,48 @@
+version: '3.8'
+networks:
+  my-network:
+    driver: bridge
+
+volumes:
+  db-data:
+
+services:
+  db:
+    image: postgres
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: jwt-security
+    ports:
+      - "5432:5432"
+    networks:
+      - my-network
+  app:
+    build:
+      context: ./SpringBootServer/security
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./SpringBootServer/security/src/main/resources/application-docker.yml:/app/application.yml
+    depends_on:
+      - db
+#    environment:
+#      SPRING_CONFIG_LOCATION: ./SpringBootServer/security/src/main/resources/application.yml
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5433/your_db
+#      SPRING_DATASOURCE_USERNAME: your_user
+#      SPRING_DATASOURCE_PASSWORD: your_password
+    networks:
+      - my-network
+  redis:
+    image: redis
+    restart: always
+    environment:
+      REDIS_PASSWORD: 12345
+    ports:
+      - "6379:6379"
+    networks:
+      - my-network

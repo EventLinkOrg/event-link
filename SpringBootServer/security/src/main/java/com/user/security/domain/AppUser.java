@@ -35,7 +35,7 @@ public class AppUser implements UserDetails {
 
   private boolean locked;
 
-  @ManyToMany(fetch = FetchType.EAGER)
+  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
   private Collection<Role> roles = new ArrayList<>();
 
   @Override

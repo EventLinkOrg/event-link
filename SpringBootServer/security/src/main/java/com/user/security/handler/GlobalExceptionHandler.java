@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
                 .badRequest()
                 .body(
                         ApiException.builder()
-                        .message(new String[]{exception.getMessage()})
+                        .messages(new String[]{exception.getMessage()})
                         .httpStatus(HttpStatus.BAD_REQUEST.value())
                         .timestamp(ZonedDateTime.now(ZoneId.of("Z")))
                         .build()
@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(ApiException.builder()
-                        .message(new String[]{exception.getMessage()})
+                        .messages(new String[]{exception.getMessage()})
                         .httpStatus(HttpStatus.BAD_REQUEST.value())
                         .timestamp(ZonedDateTime.now(ZoneId.of("Z")))
                         .build());
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<?> handleException(UsernameNotFoundException exception){
         return new ResponseEntity<>(ApiException.builder()
-                        .message(new String[]{exception.getMessage()})
+                        .messages(new String[]{exception.getMessage()})
                         .httpStatus(HttpStatus.NOT_FOUND.value())
                         .timestamp(ZonedDateTime.now(ZoneId.of("Z")))
                         .build(),HttpStatus.NOT_FOUND);
@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(ApiException.builder()
-                        .message(exception.getDetailMessageArguments())
+                        .messages((String[]) exception.getDetailMessageArguments())
                         .httpStatus(HttpStatus.BAD_REQUEST.value())
                         .timestamp(ZonedDateTime.now(ZoneId.of("Z")))
                         .build());
@@ -64,7 +64,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN.value())
                 .body(ApiException.builder()
-                        .message(new String[]{exception.getMessage()})
+                        .messages(new String[]{exception.getMessage()})
+                        .httpStatus(HttpStatus.FORBIDDEN.value())
+                        .timestamp(ZonedDateTime.now(ZoneId.of("Z")))
+                        .build());
+    }
+
+    @ExceptionHandler(InternalServerError.class)
+    public ResponseEntity<?> handleException(InternalServerError exception){
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .body(ApiException.builder()
+                        .messages(new String[]{"Internal server error"})
                         .httpStatus(HttpStatus.FORBIDDEN.value())
                         .timestamp(ZonedDateTime.now(ZoneId.of("Z")))
                         .build());
