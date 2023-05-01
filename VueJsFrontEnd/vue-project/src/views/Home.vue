@@ -19,19 +19,24 @@
     <span class="carousel-control-next-icon" aria-hidden="true"></span>
     <span class="visually-hidden">Next</span>
   </button>
-
+<About/>
 </div>
 
 
 </template>
 
 <script>
+import About from './About.vue';
 export default {
     name: 'Home',
+    components: {
+       About,
+    }
 
 }
 </script>
 
 <style>
+
 
 </style>

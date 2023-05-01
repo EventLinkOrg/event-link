@@ -1,27 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
 // import Home from '../views/About.vue';
-import Home from '../views/Home.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
       name: 'Home',
-      meta: {
-        title: 'EventLink',
-      }
-    }
-
-    ,
-    {
-      path: '/Home',
-      name: 'Home',
-      component: Home,
+      component: () => import('../views/Home.vue'),
       meta: {
         title: 'Home',
-
       }
     },
+
     {
       path: '/Events',
       name: 'EventsCard',
@@ -37,6 +27,22 @@ const router = createRouter({
       component: () => import('../views/About.vue'),
       meta: {
         title: 'About Us',
+      },
+    },
+    {
+      path: '/contact',
+      name: 'Contact',
+      component: () => import('../views/Contact.vue'),
+      meta: {
+        title: 'Contact Us',
+      },
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: () => import('../views/Login.vue'),
+      meta: {
+        title: 'Login',
       },
     }
 

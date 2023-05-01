@@ -1,8 +1,12 @@
 <template>
   <div> 
     <Navigation/>
-<!-- <Carousel/> -->
-     <router-view/>
+
+    
+<router-view></router-view>
+
+     <Footer/>
+
 
 
 
@@ -15,7 +19,7 @@
 
 
 <script >
-
+import Footer from './views/Footer.vue';
 import About from './views/About.vue'
 import Navigation from './views/Navigation.vue'
 import Home from './views/Home.vue'
@@ -26,7 +30,8 @@ export default{
     Home,
     About,
     Navigation,
-    router
+    router,
+    Footer
 
   },
   computed: {
