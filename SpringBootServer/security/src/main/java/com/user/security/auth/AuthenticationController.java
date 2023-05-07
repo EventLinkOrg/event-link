@@ -1,5 +1,6 @@
 package com.user.security.auth;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.user.security.DTO.AuthenticationRequest;
 import com.user.security.DTO.AuthenticationResponse;
 import com.user.security.DTO.RegisterRequest;
@@ -36,7 +37,7 @@ public class AuthenticationController {
   @PostMapping("/login")
   public ResponseEntity<AuthenticationResponse> authenticate(
       @RequestBody AuthenticationRequest request
-  ) {
+  ) throws JsonProcessingException {
     return ResponseEntity.ok(service.authenticate(request));
   }
 

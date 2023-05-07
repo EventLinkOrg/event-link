@@ -1,10 +1,14 @@
 package com.user.security.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.user.security.DTO.*;
 import com.user.security.config.JwtService;
 import com.user.security.domain.*;
 import com.user.security.email.EmailBuilder;
 import com.user.security.email.EmailSender;
+import com.user.security.handler.ApiException;
+import com.user.security.handler.InternalServerError;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +20,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +51,8 @@ public class AuthenticationService {
 
   private final RedisService redisService;
 
+  private final ObjectMapper objectMapper;
+
   public RegisterResponse register(RegisterRequest request) {
 
     //trying to get the user from the database
@@ -52,10 +61,10 @@ public class AuthenticationService {
     //if user exists and has confirmed the account don't generate the link
     if(tryUser != null ){
       System.out.println(tryUser);
-      if(tryUser.isEnabled()) throw new UsernameNotFoundException("there is an account associated with this email");
+      if(tryUser.isEnabled()) throw new UsernameNotFoundException("There is an account associated with this email");
     }
 
-    //if db fetch is empty add the user to database
+    //if db fetch is empty add the user to database adn add the role USER
     if(tryUser == null) {
 
       var user = AppUser.builder()
@@ -97,22 +106,13 @@ public class AuthenticationService {
                     EMAIL_LINK
                     ));
 
-    //todo when registering the user add to the user the most basic role
-
-//    userRoleService.addRoleToUser(
-//            AddRoleRequest.builder()
-//                    .userId(tryUser.getId())
-//                    .roleId(role.getId())
-//                    .build()
-//    );
-
     return RegisterResponse.builder()
         .confirmationEmail(tokenEmail)
         .build();
 
   }
 
-  public AuthenticationResponse authenticate(AuthenticationRequest request) {
+  public AuthenticationResponse authenticate(AuthenticationRequest request){
     var user = userRoleService.findByEmail(request.getEmail());
 
     if(!user.isEnabled()){
@@ -128,10 +128,26 @@ public class AuthenticationService {
 
     var claimsMap = new HashMap<String,Object>();
     claimsMap.put("authorities", user.getAuthorities());
+    claimsMap.put("userId", user.getId());
+
+
 
     var jwtToken = jwtService.generateToken(claimsMap, user);
 
-    redisService.setValue(jwtToken, jwtToken, redisService.AUTH_JWT_TOKEN_LIFESPAN);
+    JwtUser redisUser = JwtUser.builder()
+            .userId(user.getId())
+            .authorities(user.getAuthorities().stream().collect(Collectors.toList()))
+            .sub(user.getUsername())
+            .iat(new Date(System.currentTimeMillis()))
+            .exp(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+            .build();
+
+    try {
+      String serializedJwtUser = objectMapper.writeValueAsString(redisUser);
+      redisService.setValue(jwtToken, serializedJwtUser, redisService.AUTH_JWT_TOKEN_LIFESPAN);
+    }catch(JsonProcessingException e){
+      throw new InternalServerError();
+    }
 
     return AuthenticationResponse.builder()
         .token(jwtToken)
@@ -144,7 +160,7 @@ public class AuthenticationService {
             (ConfirmationTokenDTO) redisService.getValue(token);
 
     if(confirmationToken == null){
-      throw new IllegalStateException("token expired");
+      throw new IllegalStateException("Token expired or doesn't exist");
     }
 
     if (confirmationToken.isConfirmed()) {
@@ -163,4 +179,5 @@ public class AuthenticationService {
   public String throwException() {
     throw new EntityNotFoundException("this is illegal");
   }
+
 }
