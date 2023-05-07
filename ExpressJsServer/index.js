@@ -1,15 +1,32 @@
-
 const express = require('express');
 const cors = require('cors');
- const mongoose = require('mongoose');  // node modules install dependecies 
- const bodyParser = require('body-parser');
+const mongoose = require('mongoose');  // node modules install dependecies 
+const bodyParser = require('body-parser');
 const createError = require('http-errors');
+const category_route = require('./routes/category_route');
+const event_route = require('./routes/event_route');
+const Activeticket_route = require('./routes/ticket_route');
+
 require('dotenv').config();
 
 
 const app = express();
+
 const port = process.env.PORT || 4000
 console.log(process.env.PORT + "-the port")
+
+app.use(express.json())
+app.use(
+  express.urlencoded({
+    extended: false,
+  }),
+)
+app.use('/category',category_route);
+app.use('/event',event_route);
+app.use('/activeTicket',Activeticket_route);
+
+// app.use('Event');
+
 //mongoDB connection
 //lidhja me db
 mongoose
