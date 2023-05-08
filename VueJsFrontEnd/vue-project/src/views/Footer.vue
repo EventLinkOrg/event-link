@@ -1,104 +1,145 @@
 <template>
- <footer class="bg-gray-800 text-white">
-    <div class="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-wrap justify-between">
-        <div class="w-full sm:w-auto mb-6 sm:mb-0">
-          <h3 class="text-lg font-medium">Follow Us</h3>
-          <div class="flex mt-2">
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition duration-150 ease-in-out mr-4">
-              <span class="sr-only">Twitter</span>
-              <i class="fab fa-twitter"></i>
-            </a>
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition duration-150 ease-in-out mr-4">
-              <span class="sr-only">Facebook</span>
-              <i class="fab fa-facebook"></i>
-            </a>
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition duration-150 ease-in-out mr-4">
-              <span class="sr-only">Instagram</span>
-              <i class="fab fa-instagram"></i>
-            </a>
-          </div>
+<footer class="section-footer border-top bg">
+    <div class="container">
+      <section class="footer-top  padding-y">
+        <div class="row">
+          <aside class="col-md col-6">
+            <h6 class="title">Help</h6>
+            <ul class="list-unstyled">
+              <li> <a href="#">Contact us</a></li>
+              <li> <a href="#">Money refund</a></li>
+              <li> <a href="#">Order status</a></li>
+              <li> <a href="#">Event info</a></li>
+              <!-- <li> <a href="#">Open dispute</a></li> -->
+            </ul>
+          </aside>
+          <aside class="col-md col-6">
+            <h6 class="title">Account</h6>
+            <ul class="list-unstyled">
+              <li> <a href="#"> User Login </a></li>
+              <li> <a href="#"> User register </a></li>
+              <li> <a href="#"> Account Setting </a></li>
+              <li> <a href="#"> My Orders </a></li>
+            </ul>
+          </aside>
+          <aside class="col-md">
+            <h6 class="title">Social</h6>
+            <ul class="list-unstyled">
+              <li><a href="#"> <i class="fab fa-facebook"></i> Facebook </a></li>
+              <li><a href="#"> <i class="fab fa-twitter"></i> Twitter </a></li>
+              <li><a href="#"> <i class="fab fa-instagram"></i> Instagram </a></li>
+              <li><a href="#"> <i class="fab fa-youtube"></i> Youtube </a></li>
+            </ul>
+          </aside>
+        </div> <!-- row.// -->
+      </section>  <!-- footer-top.// -->
+  
+      <section class="footer-bottom row">
+        <div class="col-md-2">
+          <p class="text-muted">   2023 EventLink </p>
         </div>
-        <div class="w-full sm:w-auto mb-6 sm:mb-0">
-          <h3 class="text-lg font-medium">Contact Us</h3>
-          <div class="flex mt-2">
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition duration-150 ease-in-out mr-4">
-              <span class="sr-only">Email</span>
-              <i class="fas fa-envelope"></i>
-            </a>
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition duration-150 ease-in-out mr-4">
-              <span class="sr-only">Phone</span>
-              <i class="fas fa-phone"></i>
-            </a>
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition duration-150 ease-in-out mr-4">
-              <span class="sr-only">Address</span>
-              <i class="fas fa-map-marker-alt"></i>
-            </a>
-          </div>
+        <div class="col-md-8 text-md-center">
+          <span  class="px-2">info@eventlink.com</span>
+          <span  class="px-2">+000-000-0000</span>
+          <!-- <span  class="px-2">Street name 123, ABC</span> -->
         </div>
-      </div>
-      <div class="mt-8 text-sm">
-        <p class="text-gray-400">Copyright © 2023
-          <a href="#" class="text-gray-300 hover:text-gray-100 transition duration-150 ease-in-out ml-1">My Site Name</a>. All rights reserved.</p>
-      </div>
-    </div>
+        <div class="col-md-2 text-md-end text-muted">
+          <i class="fab fa-lg fa-cc-visa"></i> 
+          <i class="fab fa-lg fa-cc-paypal"></i> 
+          <i class="fab fa-lg fa-cc-mastercard"></i>
+        </div>
+      </section>
+    </div><!-- //container -->
   </footer>
   </template>
   
   <script>
   export default {
     name: 'Footer',
-  };
+
+    };
   </script>
   
-  <style scoped>
-footer {
+  <style>
+ /* footer {
+  /* margin-top: auto; */
+  /* position: absolute; */
+  /* bottom: 0;
+  width: 100%;
+  height: 200px;
   background-color: #222;
   color: #fff;
-}
+  display: flex; */
+  /* height: auto; */
 
-footer a {
+
+ /* footer a {
   color: #ccc;
   transition: color 0.15s ease-in-out;
+  text-align: center;
 }
 
 footer a:hover {
   color: #fff;
 }
 
-footer h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-footer i {
-  font-size: 1.5rem;
-  margin-right: 0.5rem;
-}
-
-footer p {
-  margin: 1rem 0 0;
-}
-
-@media (min-width: 640px) {
-  footer {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  footer > div {
-    width: 50%;
-  }
-
-  footer h3 {
+footer h3{
     font-size: 1.5rem;
-  }
-
-  footer i {
-    font-size: 1.75rem;
-  }
+     text-align: center;
+     font-weight: 600;
+     margin-bottom: 1rem;
+    
 }
+footer i {
+    align-items: center ;
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    display: inline-block;
+
+
+  }
+ 
+  footer p {
+    margin: 1rem 0 0;
+  }
+  
+  @media (min-width: 640px) {
+    footer {
+      display: flex;
+      justify-content: space-between;
+    }
+  
+    footer > div {
+      width: 50%;
+    }
+  
+    footer h3 {
+      font-size: 1.5rem;
+    }
+  
+    footer i {
+      font-size: 1.75rem;
+    }
+  }  
+ */
+
+ footer{
+  background-color: lightgray;
+  margin-top: auto;
+  /* height: auto;
+  flex-shrink: 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%; */
+
+ }
+
+ li a{
+  text-decoration: none;
+ }
+
 </style>
 
-  

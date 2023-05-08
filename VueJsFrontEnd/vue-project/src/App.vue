@@ -1,18 +1,15 @@
-<template>
-  <div> 
-    <Navigation/>
-
-    
-<router-view></router-view>
-
-     <Footer/>
-
-
-
-
+  <template>
+  <div>
+      <Navigation/>
+  <div>
+      
+  <router-view></router-view>
   </div>
 
-</template>
+      <Footer/>
+
+  </div>
+  </template>
 
 
 
@@ -46,7 +43,11 @@ export default{
 
 
 
-<style scoped>
-
+<style>
+/* body{
+  display: flex;
+  flex-direction:column;
+  height: auto;
+} */
 
 </style>
