@@ -1,7 +1,7 @@
 <template>
   <div class="card-group">
     <div v-for="event in events" :key="event.id" class="card">
-      <img :src="event.image" class="card-img-top" alt="Hello">
+      <img :src="event.image" class="card-img-top"  type="image/svg+xml" alt="Hello">
       <!-- <object :src="event.image" type="image/svg+xml" class="card-img-top"></object> -->
 
       <div class="card-body">
@@ -45,7 +45,7 @@ export default {
         },
         {
           id: 3,
-          image: "../assets/EventLogo.svg",
+          image: "../assets/EventsPhoto/EventPic.jpg",
           title: "Event 3",
           description: "This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.",
           lastUpdated: 30

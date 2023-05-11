@@ -33,7 +33,7 @@ export default {
 .popularevents{
   text-align: center;
   margin-top: 100px; 
-  text-shadow: 0 0 3px #FF0000, 0 0 5px #0000FF;
+  color: blue;
 }
 
   aboutus {
@@ -46,8 +46,7 @@ export default {
 h2{
   text-align: center;
   margin-top: 100px; 
-  text-shadow: 0 0 3px #FF0000, 0 0 5px #0000FF;
-
+  color: blue;
 }
 
 h3{

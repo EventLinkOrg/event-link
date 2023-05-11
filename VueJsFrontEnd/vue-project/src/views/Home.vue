@@ -23,9 +23,11 @@
 </div>
 
 
+
 </template>
 
 <script>
+
 import About from './About.vue';
 export default {
     name: 'Home',
@@ -37,6 +39,11 @@ export default {
 </script>
 
 <style>
+
+
+.carousel-inner{
+  max-height: 500px;
+}
 
 
 </style>
