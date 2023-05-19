@@ -1,14 +1,12 @@
   <template>
-  <div>
-      <Navigation/>
-  <div>
-      
-  <router-view></router-view>
+<div class="app-wraper">
+  <div class="app">
+   <Navigation/>
+<router-view/>   
+<Footer v-if="showFooter" />
   </div>
-
-      <Footer/>
-
-  </div>
+</div>
+<!-- </div> -->
   </template>
 
 
@@ -31,6 +29,23 @@ export default{
     Footer
 
   },
+  data() {
+    return {
+      showFooter: false
+    };
+  },
+  watch: {
+    $route(to) {
+      // Check the route and update the showFooter value accordingly
+      if (to.name === 'Dashboard') {
+        this.showFooter = false;
+      } else {
+        this.showFooter = true;
+      }
+    }
+  },
+
+
   computed: {
     showCarousel() {
       return this.$route.name === 'carousel';
@@ -44,10 +59,27 @@ export default{
 
 
 <style>
-/* body{
+
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+}
+
+.Footer {
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
+
+ /* body{
   display: flex;
   flex-direction:column;
   height: auto;
-} */
+}  */
 
 </style>

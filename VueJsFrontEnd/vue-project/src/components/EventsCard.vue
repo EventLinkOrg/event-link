@@ -56,7 +56,8 @@ export default {
           title: "Event 4",
           description: "This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.",
           lastUpdated: 40
-        }
+        },
+       
       ]
       }
      },
@@ -74,8 +75,33 @@ export default {
 
 <style scoped>
 
+/* .card-group {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    background-color: #fff;
+    transition: 0.5s ease all;
+
+    &:hover {
+        transform: rotateZ(-1deg) scale(1.01);
+         animation: rotation 2s infinite linear;
+
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+    }
+  
+  
+  } */
+  
+
 .card-group{
   margin-top: 100px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
 }
 
 /* .card-group h2{
@@ -91,11 +117,23 @@ export default {
 } */
 
 
-.card{
+ .card{
   padding: 10px;
   max-width: 500px;
   cursor: pointer;
+  width: calc(25% - 10px); /* Adjust the width as per your requirement */
+  margin-bottom: 20px;
+  justify-content: space-between;
+
+} 
+@media (max-width: 768px) {
+  /* Adjust the breakpoint as per your design requirements */
+  .card {
+    width: calc(50% - 10px); /* Adjust the width for smaller screens */
+  }
 }
+
+
 .card-body{
   cursor: pointer;
 }

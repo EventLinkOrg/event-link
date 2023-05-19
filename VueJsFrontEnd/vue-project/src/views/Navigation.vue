@@ -21,6 +21,9 @@
           <router-link class="nav-link" :to="{name: 'Contact'}">Contact Us</router-link>
         </li>
         <li class="nav-item">
+          <router-link class="nav-link" :to="{name: 'Dashboard'}">Dashboard</router-link>
+        </li>
+        <li class="nav-item">
           <router-link class="nav-link" :to="{name: 'Login'}">Login/Register</router-link>
         </li>
         <!-- <li class="nav-item">

@@ -60,7 +60,7 @@
     };
   </script>
   
-  <style>
+  <style scoped>
  /* footer {
   /* margin-top: auto; */
   /* position: absolute; */
@@ -125,9 +125,14 @@ footer i {
   }  
  */
 
+
+
  footer{
+  display: flex;
   background-color: lightgray;
-  margin-top: auto;
+  position: relative;
+  bottom: 0;
+  width: 100%;
   /* height: auto;
   flex-shrink: 0;
   position: absolute;
