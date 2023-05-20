@@ -37,7 +37,7 @@ export default{
   watch: {
     $route(to) {
       // Check the route and update the showFooter value accordingly
-      if (to.name === 'Dashboard') {
+      if (to.name === 'Dashboard' || to.name === 'Profile-Settings') {
         this.showFooter = false;
       } else {
         this.showFooter = true;
