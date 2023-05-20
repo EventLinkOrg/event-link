@@ -1,14 +1,5 @@
 <template>
 
-
-<!-- 
-<a class="btn btn-primary" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
-  Link with href
-</a>
-<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
-  Button with data-bs-target
-</button> -->
-
 <div class="offcanvas.show offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
   <div class="offcanvas.show-header">
     <h5 class="offcanvas.show-title" id="offcanvasExampleLabel">EventLink Dashboard</h5>
@@ -25,15 +16,14 @@
       <ul class="dropdown-menu">
         <li><a class="dropdown-item" href="#"  @click="showUsers">Users</a></li>
         <li><a class="dropdown-item" href="#" @click="showEvents">Events</a></li>
-        <li><a class="dropdown-item" href="#">Tickets</a></li>
-        <li><a class="dropdown-item" href="#">Action</a></li>
-        <li><a class="dropdown-item" href="#">Another action</a></li>
-        <li><a class="dropdown-item" href="#">Something else here</a></li>
+        <li><a class="dropdown-item" href="#" @click="showTickets">Tickets</a></li>
+    
       </ul>
     </div>
   </div>
   <Users v-if="showUsersComponent" />
   <EventsCard v-if="showEventsComponent"/>
+  <Tickets v-if="showTicketsComponent"/>
 
 
 </div>
@@ -43,16 +33,19 @@
   <script>
   import EventsCard from '../components/EventsCard.vue'
   import Users from '../components/Users.vue'
+  import Tickets from '../components/Tickets.vue'
   export default {
     name: 'Dashboard',
     components: {
         Users,
-        EventsCard
+        EventsCard,
+        Tickets,
     },
     data() {
       return {
         showUsersComponent: false,
         showEventsComponent: false,
+        showTicketsComponent: false,
     //     showComponent: false,
     //   activeComponent: null,
       };
@@ -65,6 +58,7 @@
     showUsers() {
       this.showUsersComponent = true;
       this.showEventsComponent = false;
+      this.showTicketsComponent = false;
     },
     toggleEvents() {
       this.showEventsComponent = false; 
@@ -72,18 +66,16 @@
     showEvents() {
       this.showEventsComponent = true;
       this.showUsersComponent = false;
+      this.showTicketsComponent = false;
     },
-    // showComponent(componentName) {
-    //   this.showComponent = true;
-    //   this.activeComponent = componentName;
-    // },
-//     computed: {
-//     showComponent() {
-//     this.showComponent = true;
-
-//       return this.activeComponent;
-//     }
-//   }
+    toggleTickets() {
+      this.showTicketsComponent = false;
+    },
+    showTickets() {
+      this.showTicketsComponent = true;
+      this.showUsersComponent = false;
+      this.showEventsComponent = false;
+    }
   },
 
 
