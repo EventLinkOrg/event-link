@@ -45,10 +45,9 @@
                         </select>
                       </td>
                       <td>
-                        <button type="button" class="btn btn-outline-info btn-circle btn-lg btn-circle"><i class="fa fa-key"></i> </button>
-                        <button type="button" class="btn btn-outline-info btn-circle btn-lg btn-circle ml-2"><i class="fa fa-trash"></i> </button>
-                        <button type="button" class="btn btn-outline-info btn-circle btn-lg btn-circle ml-2"><i class="fa fa-edit"></i> </button>
-                        <button type="button" class="btn btn-outline-info btn-circle btn-lg btn-circle ml-2"><i class="fa fa-upload"></i> </button>
+                        <button v-for="button in buttons" :key="button.icon" type="button" :class="button.class">
+                                 <i :class="button.icon"></i>
+                            </button>
                       </td>
                     </tr>
                     <tr>
@@ -76,10 +75,9 @@
                         </select>
                       </td>
                       <td>
-                        <button type="button" class="btn btn-outline-info btn-circle btn-lg btn-circle"><i class="fa fa-key"></i> </button>
-                        <button type="button" class="btn btn-outline-info btn-circle btn-lg btn-circle ml-2"><i class="fa fa-trash"></i> </button>
-                        <button type="button" class="btn btn-outline-info btn-circle btn-lg btn-circle ml-2"><i class="fa fa-edit"></i> </button>
-                        <button type="button" class="btn btn-outline-info btn-circle btn-lg btn-circle ml-2"><i class="fa fa-upload"></i> </button>
+                        <button v-for="button in buttons" :key="button.icon" type="button" :class="button.class">
+                                 <i :class="button.icon"></i>
+                            </button>
                       </td>
                     </tr>
                     <tr>
@@ -107,10 +105,9 @@
                         </select>
                       </td>
                       <td>
-                        <button type="button" class="btn btn-outline-info btn-circle btn-lg btn-circle"><i class="fa fa-key"></i> </button>
-                        <button type="button" class="btn btn-outline-info btn-circle btn-lg btn-circle ml-2"><i class="fa fa-trash"></i> </button>
-                        <button type="button" class="btn btn-outline-info btn-circle btn-lg btn-circle ml-2"><i class="fa fa-edit"></i> </button>
-                        <button type="button" class="btn btn-outline-info btn-circle btn-lg btn-circle ml-2"><i class="fa fa-upload"></i> </button>
+                        <button v-for="button in buttons" :key="button.icon" type="button" :class="button.class">
+                                 <i :class="button.icon"></i>
+                            </button>
                       </td>
                     </tr>
                     <tr>
@@ -138,10 +135,9 @@
                         </select>
                       </td>
                       <td>
-                        <button type="button" class="btn btn-outline-info btn-circle btn-lg btn-circle"><i class="fa fa-key"></i> </button>
-                        <button type="button" class="btn btn-outline-info btn-circle btn-lg btn-circle ml-2"><i class="fa fa-trash"></i> </button>
-                        <button type="button" class="btn btn-outline-info btn-circle btn-lg btn-circle ml-2"><i class="fa fa-edit"></i> </button>
-                        <button type="button" class="btn btn-outline-info btn-circle btn-lg btn-circle ml-2"><i class="fa fa-upload"></i> </button>
+                        <button v-for="button in buttons" :key="button.icon" type="button" :class="button.class">
+                                 <i :class="button.icon"></i>
+                            </button>
                       </td>
                     </tr>
                     <tr>
@@ -169,10 +165,9 @@
                         </select>
                       </td>
                       <td>
-                        <button type="button" :class="button1"><i class="fa fa-key"></i> </button>
-                        <button type="button" :class="button2"><i class="fa fa-trash"></i> </button>
-                        <button type="button" :class="button3"><i class="fa fa-edit"></i> </button>
-                        <button type="button" :class="button4"><i class="fa fa-upload"></i> </button>
+                        <button v-for="button in buttons" :key="button.icon" type="button" :class="button.class">
+                                 <i :class="button.icon"></i>
+                            </button>
                       </td>
                     </tr>
                     <tr>
@@ -200,10 +195,9 @@
                         </select>
                       </td>
                       <td>
-                        <button type="button" :class="button1"><i class="fa fa-key"></i> </button>
-                        <button type="button" :class="button2"><i class="fa fa-trash"></i> </button>
-                        <button type="button" :class="button3"><i class="fa fa-edit"></i> </button>
-                        <button type="button" :class="button4"><i class="fa fa-upload"></i> </button>
+                        <button v-for="button in buttons" :key="button.icon" type="button" :class="button.class">
+                                 <i :class="button.icon"></i>
+                            </button>
                       </td>
                     </tr>
                   </tbody>
@@ -222,11 +216,15 @@ export default {
 
   data(){
     return {
+
+      buttons: [
+        { class: 'btn btn-outline-info btn-circle btn-lg btn-circle', icon: 'fa fa-key' },
+        { class: 'btn btn-outline-info btn-circle btn-lg btn-circle ml-2', icon: 'fa fa-trash' },
+        { class: 'btn btn-outline-info btn-circle btn-lg btn-circle ml-2', icon: 'fa fa-edit' },
+        { class: 'btn btn-outline-info btn-circle btn-lg btn-circle ml-2', icon: 'fa fa-upload' },
+      ],
       roles: ['Admin', 'User'],
-      button1: 'btn btn-outline-info btn-circle btn-lg btn-circle',
-      button2: 'btn btn-outline-info btn-circle btn-lg btn-circle ml-2',
-      button3:  'btn btn-outline-info btn-circle btn-lg btn-circle ml-2',
-      button4:  'btn btn-outline-info btn-circle btn-lg btn-circle ml-2',
+  
     }
   },
   
