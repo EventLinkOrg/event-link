@@ -30,6 +30,12 @@ public class JwtUser {
     @JsonProperty("userId")
     private UUID userId;
 
+    @JsonProperty("firstname")
+    private String firstname;
+
+    @JsonProperty("lastname")
+    private String lastname;
+
     @JsonProperty("sub")
     private String sub;
 

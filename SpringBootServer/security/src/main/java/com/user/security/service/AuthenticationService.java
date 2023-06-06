@@ -136,6 +136,8 @@ public class AuthenticationService {
 
     JwtUser redisUser = JwtUser.builder()
             .userId(user.getId())
+            .firstname(user.getFirstname())
+            .lastname(user.getLastname())
             .authorities(user.getAuthorities().stream().collect(Collectors.toList()))
             .sub(user.getUsername())
             .iat(new Date(System.currentTimeMillis()))

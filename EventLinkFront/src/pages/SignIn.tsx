@@ -1,4 +1,18 @@
+import { Field, Form } from "react-final-form";
+
+type SignInForm = {
+  email: string;
+  password: string;
+};
+
+const required = (value: string | undefined) =>
+  value ? undefined : "Required field";
+
 const SignIn = () => {
+  const submit = ({ email, password }: SignInForm) => {
+    console.log(email);
+  };
+
   return (
     <div className="card-body ">
       <div className="navbar rounded-md">
@@ -7,60 +21,65 @@ const SignIn = () => {
             <h1 className="text-3xl font-semibold">Sign In</h1>
             <p className="text-sm">Sign in to access your account</p>
           </div>
-          <div className="form-group">
-            <div className="form-field">
-              <label className="form-label">Email address</label>
+          <Form onSubmit={submit}>
+            {({ handleSubmit }) => (
+              <div className="form-group">
+                <Field name="email" validate={required}>
+                  {({ input, meta }) => (
+                    <div className="form-field">
+                      <label className="form-label">Email address</label>
 
-              <input
-                placeholder="Type here"
-                type="email"
-                className="input max-w-full"
-              />
-              <label className="form-label">
-                <span className="form-label-alt">
-                  Please enter a valid email.
-                </span>
-              </label>
-            </div>
-            <div className="form-field">
-              <label className="form-label">Password</label>
-              <div className="form-control">
-                <input
-                  placeholder="Type here"
-                  type="password"
-                  className="input max-w-full"
-                />
-              </div>
-            </div>
-            <div className="form-field">
-              <div className="form-control justify-between">
-                <div className="flex gap-2">
-                  <input type="checkbox" className="checkbox" />
-                  <a href="#">Remember me</a>
+                      <input
+                        placeholder="Type here"
+                        type="email"
+                        className="input max-w-full"
+                        {...input}
+                      />
+                      <label className="form-label">
+                        <span className="form-label-alt">
+                          Please enter a valid email.
+                        </span>
+                      </label>
+                    </div>
+                  )}
+                </Field>
+                <Field name="password" validate={required}>
+                  {({ input, meta }) => (
+                    <div className="form-field">
+                      <label className="form-label">Password</label>
+                      <div className="form-control">
+                        <input
+                          placeholder="Type here"
+                          type="password"
+                          className="input max-w-full"
+                          {...input}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </Field>
+                <div className="form-field pt-5">
+                  <div className="form-control justify-between">
+                    <button
+                      type="submit"
+                      className="btn btn-primary w-full"
+                      onClick={handleSubmit}
+                    >
+                      Sign in
+                    </button>
+                  </div>
                 </div>
-                <label className="form-label">
-                  <a className="link link-underline-hover link-primary text-sm">
-                    Forgot your password?
-                  </a>
-                </label>
-              </div>
-            </div>
-            <div className="form-field pt-5">
-              <div className="form-control justify-between">
-                <button type="button" className="btn btn-primary w-full">
-                  Sign in
-                </button>
-              </div>
-            </div>
 
-            <div className="form-field">
-              <div className="form-control justify-center">
-                <a className="link link-underline-hover link-primary text-sm">
-                  Don't have an account yet? Sign up.
-                </a>
+                <div className="form-field">
+                  <div className="form-control justify-center">
+                    <a className="link link-underline-hover link-primary text-sm">
+                      Don't have an account yet? Sign up.
+                    </a>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            )}
+          </Form>
         </div>
       </div>
     </div>

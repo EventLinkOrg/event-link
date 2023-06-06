@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -52,8 +53,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleException(MethodArgumentNotValidException exception){
         return ResponseEntity
                 .badRequest()
-                .body(ApiException.builder()
-                        .messages((String[]) exception.getDetailMessageArguments())
+                .body(GenericApiException.builder()
+                        .messages(exception.getDetailMessageArguments())
                         .httpStatus(HttpStatus.BAD_REQUEST.value())
                         .timestamp(ZonedDateTime.now(ZoneId.of("Z")))
                         .build());

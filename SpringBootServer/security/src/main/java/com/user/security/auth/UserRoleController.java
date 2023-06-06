@@ -21,7 +21,7 @@ public class UserRoleController {
     //In this controller will be registered the endpoints that at least will need authentication
     private final UserRoleService service;
 
-    @PutMapping
+    @PutMapping("logout")
     public ResponseEntity<?> logOut(
             @RequestBody LogOutRequest request){
         service.logOut(request);
