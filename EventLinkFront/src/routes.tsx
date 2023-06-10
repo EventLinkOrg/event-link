@@ -5,6 +5,7 @@ import { SignUp } from "./pages/SignUp";
 import { Events } from "./pages/Events";
 import { Profile } from "./pages/Profile";
 import { Loading } from "./components/Loading";
+import { LogOut } from "./pages/LogOut";
 
 const routes = [
   {
@@ -35,9 +36,12 @@ const routes = [
         path: "loading-test",
         element: <Loading />,
       },
+      {
+        path: "log-out",
+        element: <LogOut />,
+      },
     ],
   },
-  //   { path: "*", element: <Home /> },
 ];
 
 export { routes };

@@ -1,6 +1,10 @@
 import { Field, Form } from "react-final-form";
+import { useToken } from "../redux/token/useToken";
+import { useEffect } from "react";
+import { useSelf } from "../redux/self/useSelf";
+import { useNavigate } from "react-router-dom";
 
-type SignInForm = {
+export type SignInForm = {
   email: string;
   password: string;
 };
@@ -9,8 +13,20 @@ const required = (value: string | undefined) =>
   value ? undefined : "Required field";
 
 const SignIn = () => {
+  const { get_token, state: tokenState, response } = useToken();
+  const { state, get_self } = useSelf();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (tokenState === "success" && response?.token) {
+      get_self(response?.token);
+      navigate("/profile");
+    }
+  }, [tokenState]);
+
   const submit = ({ email, password }: SignInForm) => {
-    console.log(email);
+    console.log("Submit");
+    get_token({ email, password });
   };
 
   return (
