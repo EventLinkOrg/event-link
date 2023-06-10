@@ -6,6 +6,7 @@ import { Events } from "./pages/Events";
 import { Profile } from "./pages/Profile";
 import { Loading } from "./components/Loading";
 import { LogOut } from "./pages/LogOut";
+import { Users } from "./pages/Users";
 
 const routes = [
   {
@@ -39,6 +40,10 @@ const routes = [
       {
         path: "log-out",
         element: <LogOut />,
+      },
+      {
+        path: "users",
+        element: <Users />,
       },
     ],
   },
