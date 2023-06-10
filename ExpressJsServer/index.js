@@ -1,25 +1,31 @@
+
+
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');  // node modules install dependecies 
-const bodyParser = require('body-parser');
 const createError = require('http-errors');
+const bodyParser = require('body-parser')
+
 const category_route = require('./routes/category_route');
 const event_route = require('./routes/event_route');
 const Activeticket_route = require('./routes/active_ticket_route');
 const Expired_ticket_route= require('./routes/expired_ticket_route');
+const routes =require('./routes/routes.js')
 
-require('dotenv').config();
+const dotenv = require('dotenv')
 
+const app = express.Router();
 
-const app = express();
+dotenv.config();
 
 const port = process.env.PORT || 4000
 console.log(process.env.PORT + "-the port")
 
-app.use(express.json())
+app.use(bodyParser.json())
 app.use(
-  express.urlencoded({
-    extended: false,
+  bodyParser.urlencoded({
+
+    extended: true,
   }),
 )
 app.use('/category',category_route);
@@ -30,6 +36,7 @@ app.use('/expiredTicket',Expired_ticket_route);
 // app.use('Event');
 
 //mongoDB connection
+
 
 mongoose
   .connect(process.env.CONNECTION_STRING)
@@ -53,6 +60,7 @@ app.use(
 )
 //app.use(cors());
 
+routes(app);
 app.listen(
   port,
   () => console.log(`server running on http://localhost:${port}`)
