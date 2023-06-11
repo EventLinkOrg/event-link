@@ -9,7 +9,7 @@ interface UsersState extends BasicState {
 
 type SortDirection = 'ASC' | 'DESC';
 
-type UsersQueryParams = {
+interface UsersQueryParams extends URLSearchParams {
     page?: number,
     size?: number
     sortDirection?: SortDirection
