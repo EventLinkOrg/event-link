@@ -1,12 +1,18 @@
-const Card = () => {
+import React from 'react';
+
+interface CardProps {
+  imageUrl: string;
+  title: string;
+  description: string;
+}
+
+const Card: React.FC<CardProps> = ({ imageUrl, title, description }) => {
   return (
     <div className="card card-image-cover">
-      <img src="https://source.unsplash.com/random/300x200" alt="" />
+      <img src={imageUrl} alt="" />
       <div className="card-body">
-        <h2 className="card-header">Maximizing Your Productivity at Work</h2>
-        <p className="text-content2">
-          Are you looking to increase your productivity at work?
-        </p>
+        <h2 className="card-header">{title}</h2>
+        <p className="text-content2">{description}</p>
         <div className="card-footer">
           <button className="btn-secondary btn">Learn More</button>
         </div>
