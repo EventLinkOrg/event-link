@@ -1,5 +1,6 @@
 const express = require('express');
 const CategoryModel = require('../models/Category');
+const Event = require('../models/Event');
 const router = express.Router();
 
 // CREATE (POST) a Category
@@ -49,6 +50,24 @@ router.post('/', async (req, res) => {
       res.status(500).json({ message: err.message });
     }
   });
+
+  // get event by category
+  router.get('/:id', getCategory, async (req, res)=>{
+    
+    let category = req.body.category;
+    const filterByCategory = async  (category) => {
+      return await Event.find({categoryId: category})
+    };
+    if(filterByCategory){
+      res.json({message: filterByCategory})
+    }else {
+      res.json({message: "No event was found related to that category"});
+    }
+
+  })
+
+
+
   
   // Middleware function to get a specific Category by ID
   async function getCategory(req, res, next) {

@@ -10,11 +10,11 @@ const category_route = require('./routes/category_route');
 const event_route = require('./routes/event_route');
 const Activeticket_route = require('./routes/active_ticket_route');
 const Expired_ticket_route= require('./routes/expired_ticket_route');
-const routes =require('./routes/routes.js')
+const routes = require('./routes/routes.js')
 
 const dotenv = require('dotenv')
 
-const app = express.Router();
+const app = express();
 
 dotenv.config();
 
@@ -58,9 +58,8 @@ app.use(
     extended: false,
   }),
 )
-//app.use(cors());
+app.use(cors());
 
-routes(app);
 app.listen(
   port,
   () => console.log(`server running on http://localhost:${port}`)
