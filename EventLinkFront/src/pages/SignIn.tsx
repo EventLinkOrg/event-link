@@ -20,10 +20,14 @@ const SignIn = () => {
   useEffect(() => {
     if (tokenState === "success" && response?.token) {
       get_self(response?.token);
+    }
+  }, [tokenState, get_self]);
+
+  useEffect(() => {
+    if (state === "success") {
       navigate("/profile");
     }
-  }, [tokenState]);
-
+  }, [state]);
   const submit = ({ email, password }: SignInForm) => {
     console.log("Submit");
     get_token({ email, password });

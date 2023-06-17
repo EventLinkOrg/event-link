@@ -2,6 +2,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { BasicState, ErrorState } from '../redux_interface';
 import axios from 'axios';
 import { RootState } from '../store';
+import { BASE_URL_SECURED } from '../../utils/const';
 
 interface UsersState extends BasicState {
     response?: UsersResponse
@@ -56,7 +57,7 @@ export const GetUsers = createAsyncThunk<UsersResponse, UsersRequest, {}>(
         params
     }, { rejectWithValue }) => {
         try {
-            const response = await axios.get('http://localhost:4000/api/v1/secured/users', { headers: { Authorization: 'Bearer ' + token }, params });
+            const response = await axios.get(`${BASE_URL_SECURED}/users`, { headers: { Authorization: 'Bearer ' + token }, params });
             return response.data;
         } catch (error: any) {
             const errorVal: ErrorState = error.response.data

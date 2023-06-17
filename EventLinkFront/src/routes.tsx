@@ -7,6 +7,9 @@ import { Profile } from "./pages/Profile";
 import { Loading } from "./components/Loading";
 import { LogOut } from "./pages/LogOut";
 import { Users } from "./pages/Users";
+import { CreateEvent } from "./pages/CreateEvent";
+import { Navigate } from "react-router-dom";
+import { EventForm } from "./pages/EventForm";
 
 const routes = [
   {
@@ -32,6 +35,24 @@ const routes = [
       {
         path: "profile",
         element: <Profile />,
+        children: [
+          {
+            path: "",
+            element: <Navigate to={"tickets"} />,
+          },
+          {
+            path: "tickets",
+            element: <div>tickets list</div>,
+          },
+          {
+            path: "user-events",
+            element: <div>Your Created events</div>,
+          },
+          {
+            path: "add-event",
+            element: <EventForm />,
+          },
+        ],
       },
       {
         path: "loading-test",
@@ -44,6 +65,10 @@ const routes = [
       {
         path: "users",
         element: <Users />,
+      },
+      {
+        path: "create-event",
+        element: <CreateEvent />,
       },
     ],
   },

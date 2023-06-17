@@ -25,6 +25,14 @@ const NAVLINKS: NavLinkType[] = [
     route: "sign-up",
     name: "Sign Up",
   },
+  {
+    route: "create-event",
+    name: "Create Event",
+  },
+  {
+    route: "profile",
+    name: "Profile",
+  },
 ];
 
 const NAVLINKS_LOGGED_IN: NavLinkType[] = [
