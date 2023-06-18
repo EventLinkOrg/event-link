@@ -32,21 +32,29 @@ router.post('/', upload.single('image'), async (req, res) => {
 // READ (GET) all Events
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, size = 8, sortDirection = 'asc', sortColumn = 'startDate' } = req.query;
-    const skip = (page - 1) * size;
+    const { page = 0, size = 8, sortDirection = 'asc', sortColumn = 'startDate' } = req.query;
+    const skip = page * size;
 
-    const events = await Event.find()
-      .skip(skip)
-      .limit(size)
-      .sort({ [sortColumn]: sortDirection });
+    const [events, totalCount] = await Promise.all([
+      Event.find()
+        .skip(skip)
+        .limit(size)
+        .sort({ [sortColumn]: sortDirection }),
+      Event.countDocuments(),
+    ]);
+
+    const total = Math.ceil(totalCount / size);
 
     const response = {
-      page,
-      size,
+      page: parseInt(page),
+      size: parseInt(size),
       sortColumn,
       sortDirection,
-      data: events
-    }
+      data: events,
+      total,
+      totalCount,
+    };
+
     res.json(response);
   } catch (err) {
     res.status(500).json({ message: err.message });

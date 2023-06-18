@@ -24,7 +24,7 @@ const Pagination = ({
   onPrev,
   onNext,
   page,
-  totalPages,
+  totalPages = 0,
   onClick,
 }: PaginationProps) => {
   const pageNums = useMemo(() => {

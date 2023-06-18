@@ -3,6 +3,7 @@ import { Card } from "../components/Card";
 import { DropdownCategory } from "../components/DropdownCategory";
 import { NotFound } from "../components/NotFound"; // Import the NotFound component
 import { useEvents } from "../redux/events/useEvents";
+import { Pagination } from "../components/Pagination";
 
 const Events = () => {
   const { get, response } = useEvents();
@@ -41,66 +42,6 @@ const Events = () => {
     {
       imageUrl: "https://source.unsplash.com/random/300x200",
       title: "Positive",
-      description: "Are you looking to increase your productivity at work?",
-    },
-    {
-      imageUrl: "https://source.unsplash.com/random/300x200",
-      title: "Positive",
-      description: "Are you looking to increase your productivity at work?",
-    },
-    {
-      imageUrl: "https://source.unsplash.com/random/300x200",
-      title: "EventLink",
-      description: "Are you looking to increase your productivity at work?",
-    },
-    {
-      imageUrl: "https://source.unsplash.com/random/300x200",
-      title: "EventLink",
-      description: "Are you looking to increase your productivity at work?",
-    },
-    {
-      imageUrl: "https://source.unsplash.com/random/300x200",
-      title: "EventLink",
-      description: "Are you looking to increase your productivity at work?",
-    },
-    {
-      imageUrl: "https://source.unsplash.com/random/300x200",
-      title: "ss Your Productivity at Work",
-      description: "Are you looking to increase your productivity at work?",
-    },
-    {
-      imageUrl: "https://source.unsplash.com/random/300x200",
-      title: "EventLink",
-      description: "Are you looking to increase your productivity at work?",
-    },
-    {
-      imageUrl: "https://source.unsplash.com/random/300x200",
-      title: "ss Your Productivity at Work",
-      description: "Are you looking to increase your productivity at work?",
-    },
-    {
-      imageUrl: "https://source.unsplash.com/random/300x200",
-      title: "ss Your Productivity at Work",
-      description: "Are you looking to increase your productivity at work?",
-    },
-    {
-      imageUrl: "https://source.unsplash.com/random/300x200",
-      title: "ss Your Productivity at Work",
-      description: "Are you looking to increase your productivity at work?",
-    },
-    {
-      imageUrl: "https://source.unsplash.com/random/300x200",
-      title: "ss Your Productivity at Work",
-      description: "Are you looking to increase your productivity at work?",
-    },
-    {
-      imageUrl: "https://source.unsplash.com/random/300x200",
-      title: "ss Your Productivity at Work",
-      description: "Are you looking to increase your productivity at work?",
-    },
-    {
-      imageUrl: "https://source.unsplash.com/random/300x200",
-      title: "ss Your Productivity at Work",
       description: "Are you looking to increase your productivity at work?",
     },
   ];
@@ -143,6 +84,17 @@ const Events = () => {
               description={card.textContent}
             />
           ))}
+        </div>
+      )}
+      {response && (
+        <div className="card-body">
+          <Pagination
+            onPrev={() => {}}
+            onNext={() => {}}
+            onClick={() => {}}
+            totalPages={response.total}
+            page={response?.page! + 1}
+          />
         </div>
       )}
     </div>
