@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { Card } from "../components/Card";
 import { DropdownCategory } from "../components/DropdownCategory";
 import { NotFound } from "../components/NotFound"; // Import the NotFound component
-
+import { useEvents } from "../redux/events/useEvents";
 
 const Events = () => {
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
+  const { get, response } = useEvents();
+
+  useEffect(() => {
+    get({});
+  }, [get]);
+
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
@@ -20,87 +26,87 @@ const Events = () => {
     {
       imageUrl: "https://source.unsplash.com/random/300x200",
       title: "Hello Your Productivity at Work",
-      description: "Are you looking to increase your productivity at work?"
+      description: "Are you looking to increase your productivity at work?",
     },
     {
       imageUrl: "https://source.unsplash.com/random/300x200",
       title: "Positive",
-      description: "Are you looking to increase your productivity at work?"
+      description: "Are you looking to increase your productivity at work?",
     },
     {
       imageUrl: "https://source.unsplash.com/random/300x200",
       title: "Positive",
-      description: "Are you looking to increase your productivity at work?"
+      description: "Are you looking to increase your productivity at work?",
     },
     {
       imageUrl: "https://source.unsplash.com/random/300x200",
       title: "Positive",
-      description: "Are you looking to increase your productivity at work?"
+      description: "Are you looking to increase your productivity at work?",
     },
     {
       imageUrl: "https://source.unsplash.com/random/300x200",
       title: "Positive",
-      description: "Are you looking to increase your productivity at work?"
+      description: "Are you looking to increase your productivity at work?",
     },
     {
       imageUrl: "https://source.unsplash.com/random/300x200",
       title: "EventLink",
-      description: "Are you looking to increase your productivity at work?"
+      description: "Are you looking to increase your productivity at work?",
     },
     {
       imageUrl: "https://source.unsplash.com/random/300x200",
       title: "EventLink",
-      description: "Are you looking to increase your productivity at work?"
+      description: "Are you looking to increase your productivity at work?",
     },
     {
       imageUrl: "https://source.unsplash.com/random/300x200",
       title: "EventLink",
-      description: "Are you looking to increase your productivity at work?"
+      description: "Are you looking to increase your productivity at work?",
     },
     {
       imageUrl: "https://source.unsplash.com/random/300x200",
       title: "ss Your Productivity at Work",
-      description: "Are you looking to increase your productivity at work?"
+      description: "Are you looking to increase your productivity at work?",
     },
     {
       imageUrl: "https://source.unsplash.com/random/300x200",
       title: "EventLink",
-      description: "Are you looking to increase your productivity at work?"
+      description: "Are you looking to increase your productivity at work?",
     },
     {
       imageUrl: "https://source.unsplash.com/random/300x200",
       title: "ss Your Productivity at Work",
-      description: "Are you looking to increase your productivity at work?"
+      description: "Are you looking to increase your productivity at work?",
     },
     {
       imageUrl: "https://source.unsplash.com/random/300x200",
       title: "ss Your Productivity at Work",
-      description: "Are you looking to increase your productivity at work?"
+      description: "Are you looking to increase your productivity at work?",
     },
     {
       imageUrl: "https://source.unsplash.com/random/300x200",
       title: "ss Your Productivity at Work",
-      description: "Are you looking to increase your productivity at work?"
+      description: "Are you looking to increase your productivity at work?",
     },
     {
       imageUrl: "https://source.unsplash.com/random/300x200",
       title: "ss Your Productivity at Work",
-      description: "Are you looking to increase your productivity at work?"
+      description: "Are you looking to increase your productivity at work?",
     },
     {
       imageUrl: "https://source.unsplash.com/random/300x200",
       title: "ss Your Productivity at Work",
-      description: "Are you looking to increase your productivity at work?"
+      description: "Are you looking to increase your productivity at work?",
     },
     {
       imageUrl: "https://source.unsplash.com/random/300x200",
       title: "ss Your Productivity at Work",
-      description: "Are you looking to increase your productivity at work?"
+      description: "Are you looking to increase your productivity at work?",
     },
   ];
 
   // Filter the cards based on the search term
-  const filteredCards = cardsData.filter(card =>
+  const filteredCards = cardsData.filter((card) =>
     card.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -109,14 +115,16 @@ const Events = () => {
       {/* {selectedCategory && <SuccesAlert selectedCategory={selectedCategory} />} */}
       <DropdownCategory onSelectCategory={handleCategoryChange} />
       <div className="search-box">
-        <input className="search" style={{ 
-         width: '350px',
-         height: '40px',
-         marginLeft: '40px',
-         padding: '10px',
-         border: '1px solid',
-         borderRadius: '5px' 
-        }}
+        <input
+          className="search"
+          style={{
+            width: "350px",
+            height: "40px",
+            marginLeft: "40px",
+            padding: "10px",
+            border: "1px solid",
+            borderRadius: "5px",
+          }}
           type="text"
           placeholder="Search by title..."
           value={searchTerm}
@@ -124,18 +132,18 @@ const Events = () => {
         />
       </div>
       {filteredCards.length === 0 ? (
-       <NotFound />
+        <NotFound />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 mt-7">
-          {filteredCards.map((card, index) => (
+          {response?.data.map((card, index) => (
             <Card
               key={index}
-              imageUrl={card.imageUrl}
+              image={card.img}
               title={card.title}
-              description={card.description}
+              description={card.textContent}
             />
           ))}
-      </div>
+        </div>
       )}
     </div>
   );

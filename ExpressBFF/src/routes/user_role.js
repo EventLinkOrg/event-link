@@ -66,4 +66,36 @@ router.post('/promote', authMiddleware(new Set(['ADMIN'])), async (req, res) => 
         });
 })
 
+router.get('/category', async (req, res) => {
+    console.log(req.params)
+    axios.get(`${env.EXPRESS_SERVER_PATH}/category`, { headers: { Authorization: req.headers.authorization } })
+        .then((response) => {
+            res.send(response.data);
+        })
+        .catch((error) => {
+            res.status(error.response.status).send(error.response.data);
+        });
+});
+
+router.post('/category', async (req, res) => {
+    console.log(req.params)
+    axios.post(`${env.EXPRESS_SERVER_PATH}/event`, req.body, { headers: { Authorization: req.headers.authorization } })
+        .then((response) => {
+            res.send(response.data);
+        })
+        .catch((error) => {
+            res.status(error.response.status).send(error.response.data);
+        });
+});
+
+router.get('/event', async (req, res) => {
+    axios.get(`${env.EXPRESS_SERVER_PATH}/event`, { headers: { Authorization: req.headers.authorization }, params: req.query })
+        .then((response) => {
+            res.send(response.data);
+        })
+        .catch((error) => {
+            res.status(error.response.status).send(error.response.data);
+        });
+});
+
 export default router;

@@ -1,5 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Field, Form } from "react-final-form";
+import { Button } from "../components/Button";
+import { useCategories } from "../redux/categories/useCategories";
+
+type EventFormData = {
+  title: string;
+  category: string;
+  textContent: string;
+  startDate: string;
+  startTime: string;
+  endDate: string;
+  endTime: string;
+};
 
 const required = (value: string | undefined) =>
   value ? undefined : "Required field";
@@ -21,45 +33,58 @@ const dateValidation = (value: string) => {
     : "The selected date must be tomorrow or a day in the future";
 };
 
-const endDateValidation = (
-  startDate: string | undefined,
-  endDate: string | undefined,
-  startTime: string | undefined,
-  endTime: string | undefined
-) => {
-  if (startDate && endDate && startTime && endTime) {
-    const startDateTime = new Date(`${startDate} ${startTime}`);
-    const endDateTime = new Date(`${endDate} ${endTime}`);
+// const endDateValidation = ({
+//   startDate,
+//   endDate,
+//   startTime,
+//   endTime,
+// }: EventFormData) => {
+//   if (startDate && endDate && startTime && endTime) {
+//     const errors: EventFormData = {
+//       title: "",
+//       category: "",
+//       textContent: "",
+//       startDate: "",
+//       startTime: "",
+//       endDate: "",
+//       endTime: "",
+//     };
+//     const startDateTime = new Date(`${startDate} ${startTime}`);
+//     const endDateTime = new Date(`${endDate} ${endTime}`);
 
-    // Compare the start and end dates
-    if (endDateTime >= startDateTime) {
-      // If the end date is greater than or equal to the start date
+//     // Compare the start and end dates
+//     if (endDateTime >= startDateTime) {
+//       // If the end date is greater than or equal to the start date
 
-      if (endDateTime.getTime() === startDateTime.getTime()) {
-        // If the dates are equal, compare the start and end times
-        const startTimeParts = startTime.split(":");
-        const endTimeParts = endTime.split(":");
-        const startHour = parseInt(startTimeParts[0], 10);
-        const startMinute = parseInt(startTimeParts[1], 10);
-        const endHour = parseInt(endTimeParts[0], 10);
-        const endMinute = parseInt(endTimeParts[1], 10);
+//       if (endDateTime.getTime() === startDateTime.getTime()) {
+//         // If the dates are equal, compare the start and end times
+//         const startTimeParts = startTime.split(":");
+//         const endTimeParts = endTime.split(":");
+//         const startHour = parseInt(startTimeParts[0], 10);
+//         const startMinute = parseInt(startTimeParts[1], 10);
+//         const endHour = parseInt(endTimeParts[0], 10);
+//         const endMinute = parseInt(endTimeParts[1], 10);
 
-        if (endHour > startHour) {
-          // If the end hour is greater than the start hour
-          return "Change the end time to be later than the start time";
-        } else if (endHour === startHour && endMinute >= startMinute) {
-          // If the end hour is equal to the start hour, compare the minutes
-          return "Change the end time to be later than the start time";
-        }
-      } else {
-        return "";
-      }
-    }
-
-    return "End date should be greater or equal with start date";
-  }
-  return undefined;
-};
+//         if (endHour > startHour) {
+//           // If the end hour is greater than the start hour
+//           errors.endTime =
+//             "Change the end time to be later than the start time";
+//           return errors;
+//         } else if (endHour === startHour && endMinute >= startMinute) {
+//           // If the end hour is equal to the start hour, compare the minutes
+//           errors.endTime =
+//             "Change the end time to be later than the start time";
+//           return errors;
+//         }
+//       } else {
+//         return errors;
+//       }
+//     }
+//     errors.endDate = "End date should be greater or equal with start date";
+//     return errors;
+//   }
+//   return undefined;
+// };
 
 const categories = [
   {
@@ -72,18 +97,14 @@ const categories = [
   },
 ];
 
-type EventFormData = {
-  title: string;
-  category: string;
-  textContent: string;
-  startDate: string;
-  startTime: string;
-  endDate: string;
-  endTime: string;
-};
-
 const EventForm = () => {
   const [image, setImage] = useState<string>("");
+
+  const { response, get } = useCategories();
+
+  useEffect(() => {
+    get();
+  }, []);
 
   const submit = ({
     title,
@@ -105,7 +126,7 @@ const EventForm = () => {
 
   return (
     <Form onSubmit={submit}>
-      {({ handleSubmit, values }) => (
+      {({ handleSubmit }) => (
         <div className="form-group">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field name="title" validate={required}>
@@ -135,9 +156,10 @@ const EventForm = () => {
                   <label className="form-label">Select category</label>
 
                   <select className="select" {...input}>
-                    {categories.map((category) => (
-                      <option>{category.name}</option>
-                    ))}
+                    {response &&
+                      response.map((category) => (
+                        <option>{category.title}</option>
+                      ))}
                   </select>
                   {meta && meta.error && (
                     <label className="form-label">
@@ -246,18 +268,7 @@ const EventForm = () => {
             </Field>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Field
-              name="endDate"
-              validate={composeValidators(
-                required,
-                endDateValidation(
-                  values.startDate,
-                  values.startTime,
-                  values.endDate,
-                  values.endTime
-                )
-              )}
-            >
+            <Field name="endDate" validate={required}>
               {({ input, meta }) => (
                 <div className="form-field">
                   <label className="form-label">End Date</label>
@@ -270,9 +281,7 @@ const EventForm = () => {
                   />
                   {meta && meta.error && (
                     <label className="form-label">
-                      <span className="form-label-alt">
-                        Please enter a description.
-                      </span>
+                      <span className="form-label-alt">{meta.error}</span>
                     </label>
                   )}
                 </div>
@@ -308,7 +317,7 @@ const EventForm = () => {
             </Field>
           </div>
 
-          <button onClick={handleSubmit}>submit</button>
+          <Button onClick={handleSubmit} text="Submit" />
         </div>
       )}
     </Form>

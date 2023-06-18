@@ -32,8 +32,22 @@ router.post('/', upload.single('image'), async (req, res) => {
 // READ (GET) all Events
 router.get('/', async (req, res) => {
   try {
-    const events = await Event.find();
-    res.json(events);
+    const { page = 1, size = 8, sortDirection = 'asc', sortColumn = 'startDate' } = req.query;
+    const skip = (page - 1) * size;
+
+    const events = await Event.find()
+      .skip(skip)
+      .limit(size)
+      .sort({ [sortColumn]: sortDirection });
+
+    const response = {
+      page,
+      size,
+      sortColumn,
+      sortDirection,
+      data: events
+    }
+    res.json(response);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
