@@ -1,10 +1,26 @@
 const express = require('express');
 const Event = require('../models/Event');
 const router = express.Router();
+const multer = require('multer');
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 // CREATE (POST) an Event
-router.post('/', async (req, res) => {
+router.post('/', upload.single('image'), async (req, res) => {
   try {
+    if (req.file) {
+      const image = {
+        name: req.file.originalname,
+        data: req.file.buffer,
+        contentType: req.file.mimetype
+      }
+      req.body.img = image;
+    } else {
+      req.body.img = null
+    }
+    req.body.dateAdded = new Date(Date.now())
+    console.log(req.body)
     const newEvent = new Event(req.body);
     await newEvent.save();
     res.status(201).json(newEvent);

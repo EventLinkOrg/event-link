@@ -6,38 +6,39 @@ const eventSchema = new Schema(
     {
         title: {
             type: String,
-            required:true
+            required: true
         },
         dateAdded: {
             type: Date,
-            required:true
+            required: true
         },
         startDate: {
             type: Date,
-            required:true
+            required: true
 
         },
-        duration:{
-            type: Number,
-            required:true
+        endDate: {
+            type: Date,
+            required: true
+
         },
-        tickets:{
+        tickets: {
             type: Number,
-            required:true
+            required: true
         },
         textContent: {
             type: String,
-            required:true
+            required: true
         },
         categoryId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Category',
             required: true
-          },
-          userId:{
+        },
+        userId: {
             type: String,
-            required:true
-          },
+            required: true
+        },
         img:
         {
             name: String,

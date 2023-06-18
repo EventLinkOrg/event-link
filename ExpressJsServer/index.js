@@ -9,8 +9,7 @@ const bodyParser = require('body-parser')
 const category_route = require('./routes/category_route');
 const event_route = require('./routes/event_route');
 const Activeticket_route = require('./routes/active_ticket_route');
-const Expired_ticket_route= require('./routes/expired_ticket_route');
-const routes = require('./routes/routes.js')
+const Expired_ticket_route = require('./routes/expired_ticket_route');
 
 const dotenv = require('dotenv')
 
@@ -28,10 +27,10 @@ app.use(
     extended: true,
   }),
 )
-app.use('/category',category_route);
-app.use('/event',event_route);
-app.use('/activeTicket',Activeticket_route);
-app.use('/expiredTicket',Expired_ticket_route);
+app.use('/category', category_route);
+app.use('/event', event_route);
+app.use('/activeTicket', Activeticket_route);
+app.use('/expiredTicket', Expired_ticket_route);
 
 // app.use('Event');
 
