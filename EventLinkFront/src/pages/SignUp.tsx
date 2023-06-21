@@ -1,4 +1,7 @@
 import { Field, Form } from "react-final-form";
+import axios from "axios";
+import { useState } from "react";
+import { Alert } from "../components/Alert";
 
 type SignUpForm = {
   firstname: string;
@@ -7,16 +10,41 @@ type SignUpForm = {
   password: string;
 };
 
+const REGISTER_URL = "http://localhost:4000/api/v1/auth/register";
+
 const required = (value: string | undefined) =>
   value ? undefined : "Required field";
 
+type RegisterAttempt = "Success" | "Failure" | "Idle";
+
 const SignUp = () => {
-  const submit = (formData: SignUpForm) => {
+  const [registerAttempt, setRegisterAttempt] =
+    useState<RegisterAttempt>("Idle");
+  const [message, setMessage] = useState<string>("");
+  const submit = async (formData: SignUpForm) => {
+    try {
+      const res = await axios.post(REGISTER_URL, formData);
+      setRegisterAttempt("Success");
+    } catch (err: { messages: string[][] } | any) {
+      console.error(err);
+      setRegisterAttempt("Failure");
+      setMessage(err && err.messages && err.messages[1].join(""));
+    }
     console.log(formData);
   };
 
   return (
     <div className="card-body ">
+      {registerAttempt === "Success" && (
+        <Alert
+          title={"Success Registration"}
+          content={"Check your email for account confirmation before login"}
+          alertType={"success"}
+        />
+      )}
+      {registerAttempt === "Failure" && (
+        <Alert title={"Error"} content={message} alertType={"error"} />
+      )}
       <div className="navbar rounded-md">
         <div className="mx-auto flex w-full max-w-sm flex-col gap-6">
           <div className="flex flex-col items-center">
@@ -37,11 +65,13 @@ const SignUp = () => {
                         className="input max-w-full"
                         {...input}
                       />
-                      <label className="form-label">
-                        <span className="form-label-alt">
-                          Please enter a valid name.
-                        </span>
-                      </label>
+                      {meta && meta.error && (
+                        <label className="form-label">
+                          <span className="form-label-alt">
+                            Please enter a valid name.
+                          </span>
+                        </label>
+                      )}
                     </div>
                   )}
                 </Field>
@@ -56,11 +86,13 @@ const SignUp = () => {
                         className="input max-w-full"
                         {...input}
                       />
-                      <label className="form-label">
-                        <span className="form-label-alt">
-                          Please enter a last name.
-                        </span>
-                      </label>
+                      {meta && meta.error && (
+                        <label className="form-label">
+                          <span className="form-label-alt">
+                            Please enter a valid name.
+                          </span>
+                        </label>
+                      )}
                     </div>
                   )}
                 </Field>
@@ -75,11 +107,13 @@ const SignUp = () => {
                         className="input max-w-full"
                         {...input}
                       />
-                      <label className="form-label">
-                        <span className="form-label-alt">
-                          Please enter a valid email.
-                        </span>
-                      </label>
+                      {meta && meta.error && (
+                        <label className="form-label">
+                          <span className="form-label-alt">
+                            Please enter a valid name.
+                          </span>
+                        </label>
+                      )}
                     </div>
                   )}
                 </Field>
@@ -94,11 +128,13 @@ const SignUp = () => {
                         className="input max-w-full"
                         {...input}
                       />
-                      <label className="form-label">
-                        <span className="form-label-alt">
-                          Please enter a valid password.
-                        </span>
-                      </label>
+                      {meta && meta.error && (
+                        <label className="form-label">
+                          <span className="form-label-alt">
+                            Please enter a valid name.
+                          </span>
+                        </label>
+                      )}
                     </div>
                   )}
                 </Field>
@@ -122,17 +158,13 @@ const SignUp = () => {
                       type="button"
                       className="btn btn-primary w-full"
                     >
-                      Sign in
+                      Sign up
                     </button>
                   </div>
                 </div>
 
                 <div className="form-field">
-                  <div className="form-control justify-center">
-                    <a className="link link-underline-hover link-primary text-sm">
-                      Don't have an account yet? Sign up.
-                    </a>
-                  </div>
+                  <div className="form-control justify-center"></div>
                 </div>
               </div>
             )}
