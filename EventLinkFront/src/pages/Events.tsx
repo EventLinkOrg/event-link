@@ -4,16 +4,40 @@ import { DropdownCategory } from "../components/DropdownCategory";
 import { NotFound } from "../components/NotFound"; // Import the NotFound component
 import { useEvents } from "../redux/events/useEvents";
 import { Pagination } from "../components/Pagination";
+import { useSearchParams } from "react-router-dom";
 
 const Events = () => {
   const { get, response } = useEvents();
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
   useEffect(() => {
-    get({});
-  }, [get]);
+    get({ params: searchParams });
+  }, [get, searchParams]);
 
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+
+  const onCurrentClick = (input: string) => {
+    response && searchParams.set("page", (parseInt(input) - 1).toString());
+
+    // Update the query parameters
+    setSearchParams(searchParams);
+  };
+
+  const onNextClick = () => {
+    response && searchParams.set("page", (response?.page + 1).toString());
+
+    // Update the query parameters
+    setSearchParams(searchParams);
+  };
+
+  const onPrevClick = () => {
+    response && searchParams.set("page", (response?.page - 1).toString());
+
+    // Update the query parameters
+    setSearchParams(searchParams);
+  };
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
@@ -89,9 +113,9 @@ const Events = () => {
       {response && (
         <div className="card-body">
           <Pagination
-            onPrev={() => {}}
-            onNext={() => {}}
-            onClick={() => {}}
+            onPrev={onPrevClick}
+            onNext={onNextClick}
+            onClick={onCurrentClick}
             totalPages={response.total}
             page={response?.page! + 1}
           />

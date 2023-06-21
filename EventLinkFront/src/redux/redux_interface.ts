@@ -3,7 +3,7 @@ export interface BasicState {
     error?: ErrorState
 }
 
-type ReduxState = 'idle' | 'success' | 'error' | 'pending'
+export type ReduxState = 'idle' | 'success' | 'error' | 'pending'
 
 export type ErrorState = {
     messages: string[],
