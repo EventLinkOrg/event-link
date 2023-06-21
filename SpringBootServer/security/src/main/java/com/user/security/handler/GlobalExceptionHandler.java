@@ -1,5 +1,6 @@
 package com.user.security.handler;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -77,6 +78,17 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .body(ApiException.builder()
                         .messages(new String[]{"Internal server error"})
+                        .httpStatus(HttpStatus.FORBIDDEN.value())
+                        .timestamp(ZonedDateTime.now(ZoneId.of("Z")))
+                        .build());
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<?> handleException(ExpiredJwtException exception){
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN.value())
+                .body(ApiException.builder()
+                        .messages(new String[]{"Token expired"})
                         .httpStatus(HttpStatus.FORBIDDEN.value())
                         .timestamp(ZonedDateTime.now(ZoneId.of("Z")))
                         .build());
