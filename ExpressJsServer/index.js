@@ -29,7 +29,7 @@ app.use(
 )
 app.use('/category', category_route);
 app.use('/event', event_route);
-app.use('/activeTicket', Activeticket_route);
+app.use('/ticket', Activeticket_route);
 app.use('/expiredTicket', Expired_ticket_route);
 
 // app.use('Event');

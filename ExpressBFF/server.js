@@ -3,6 +3,7 @@ import env from './env.js';
 import auth from './src/routes/authentication.js';
 import userRole from './src/routes/user_role.js';
 import cors from 'cors';
+import multer from 'multer';
 
 const app = express();
 const PORT = env.PORT || 4000;
@@ -10,9 +11,10 @@ const PORT = env.PORT || 4000;
 app.use(express.json());
 app.use(
     express.urlencoded({
-        extended: false,
+        extended: true,
     }),
 )
+// app.use(multer().no)
 
 app.use(cors({
     origin: '*', // Replace with the appropriate origin URL

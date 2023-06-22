@@ -1,5 +1,6 @@
 const express = require('express');
 const ActiveTicket = require('../models/ActiveTicket');
+const Event = require('../models/Event');
 const router = express.Router();
 
 
@@ -20,11 +21,15 @@ router.get('/:id', getActiveTicket, (req, res) => {
 
 // Create one ActiveTicket
 router.post('/', async (req, res) => {
-  const activeticket = new ActiveTicket({
-    title: req.body.title,
-    ticketPrice: req.body.ticketPrice,
-    eventId: req.body.eventId
-  });
+
+  const event = await Event.findById(req.body.eventId)
+  if (event.tickets <= 0) {
+    return res.status(404).json({ message: "No tickets left" });
+  }
+  event.tickets--;
+  await event.save();
+  req.body.datePurchased = new Date(Date.now())
+  const activeticket = new ActiveTicket(req.body);
 
   try {
     const newActiveTicket = await activeticket.save();
@@ -99,6 +104,15 @@ async function getActiveTicketsByEvent(req, res, next) {
   res.activeTickets = activeTickets;
   next();
 }
+
+router.get('/user/:id', async (req, res) => {
+  try {
+    const data = await ActiveTicket.find({ userId: req.params.id })
+    res.json(data);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+})
 
 
 

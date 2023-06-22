@@ -9,6 +9,7 @@ const upload = multer({ storage: storage });
 // CREATE (POST) an Event
 router.post('/', upload.single('image'), async (req, res) => {
   try {
+    console.log(req.body)
     if (req.file) {
       const image = {
         name: req.file.originalname,
@@ -16,11 +17,8 @@ router.post('/', upload.single('image'), async (req, res) => {
         contentType: req.file.mimetype
       }
       req.body.img = image;
-    } else {
-      req.body.img = null
     }
     req.body.dateAdded = new Date(Date.now())
-    console.log(req.body)
     const newEvent = new Event(req.body);
     await newEvent.save();
     res.status(201).json(newEvent);
@@ -28,6 +26,18 @@ router.post('/', upload.single('image'), async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
+
+
+router.get('/user/:id', async (req, res) => {
+  try {
+    userId = req.params.id;
+    const rez = await Event.find({ userId: userId })
+    res.json(rez);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+
+  }
+})
 
 // READ (GET) all Events
 router.get('/', async (req, res) => {

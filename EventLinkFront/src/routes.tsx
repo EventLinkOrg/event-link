@@ -10,6 +10,8 @@ import { Users } from "./pages/Users";
 import { CreateEvent } from "./pages/CreateEvent";
 import { Navigate } from "react-router-dom";
 import { EventForm } from "./pages/EventForm";
+import { UserEvents } from "./pages/UserEvents";
+import { UserTickets } from "./pages/UserTickets";
 
 const routes = [
   {
@@ -42,11 +44,11 @@ const routes = [
           },
           {
             path: "tickets",
-            element: <div>tickets list</div>,
+            element: <UserTickets />,
           },
           {
             path: "user-events",
-            element: <div>Your Created events</div>,
+            element: <UserEvents />,
           },
           {
             path: "add-event",

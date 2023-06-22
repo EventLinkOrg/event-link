@@ -124,7 +124,7 @@ const SignUp = () => {
 
                       <input
                         placeholder="Type here"
-                        type="email"
+                        type="password"
                         className="input max-w-full"
                         {...input}
                       />

@@ -3,6 +3,10 @@ import axios from 'axios';
 import env from '../../env.js';
 import { redis } from '../config/jwt_redis_client.js';
 import { getUserDataFromRedis, authMiddleware, parseJsonString } from '../helpers/token_exctractor.js';
+import multer from 'multer';
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 const router = express.Router();
 
@@ -34,6 +38,16 @@ router.get('/users', authMiddleware(new Set(['ADMIN'])), async (req, res) => {
         });
 });
 
+router.get('/events/:id', async (req, res) => {
+    console.log(req.params)
+    axios.get(`${env.EXPRESS_SERVER_PATH}/event/user/${req.params.id}`, { headers: { Authorization: req.headers.authorization } })
+        .then((response) => {
+            res.send(response.data);
+        })
+        .catch((error) => {
+            res.status(error.response.status).send(error.response.data);
+        });
+});
 
 router.get('/roles', authMiddleware(new Set(['ADMIN'])), async (req, res) => {
     console.log(req.params)
@@ -97,5 +111,56 @@ router.get('/event', async (req, res) => {
             res.status(error.response.status).send(error.response.data);
         });
 });
+
+router.post('/event', upload.single('image'), authMiddleware(new Set(['ADMIN', 'SUBSCRIBED USER'])), async (req, res) => {
+
+    const accessToken = req.headers.authorization?.split(' ')[1];
+    const data = await getUserDataFromRedis(accessToken)
+    const jsonData = JSON.parse(parseJsonString(data));
+    // console.log(req.body);
+    // console.log(jsonData);
+    req.body.userId = jsonData.userId;
+    // console.log(req.body.userId)
+
+    // console.log(req.file)
+    if (req.file) {
+        // req.body.image = req.file
+        console.log(req.file)
+        console.log('file reached')
+    }
+
+    const formData = {
+        ...req.body,
+        // file: req.file.buffer, // Get the file data from the multer upload
+    };
+
+    console.log(formData)
+
+    axios.post(`${env.EXPRESS_SERVER_PATH}/event`, formData, { headers: { Authorization: req.headers.authorization, "Content-Type": 'multipart/form-data', }, params: req.query })
+        .then((response) => {
+            res.send(response.data);
+        })
+        .catch((error) => {
+            res.status(error.response.status).send(error.response.data);
+        });
+});
+
+router.get('/ticket/:id', authMiddleware(new Set(['USER'])), async (req, res) => {
+    axios.get(`${env.EXPRESS_SERVER_PATH}/ticket/user/${req.params.id}`).then((response) => {
+        res.send(response.data);
+    }).catch((error) => {
+        res.status(error.response.status).send(error.response.data);
+
+    })
+})
+
+router.post('/ticket', authMiddleware(new Set(['USER'])), async (req, res) => {
+    axios.post(`${env.EXPRESS_SERVER_PATH}/ticket`, req.body, { headers: { Authorization: req.headers.authorization } }).then((response) => {
+        res.send(response.data);
+    }).catch((error) => {
+        res.status(error.response.status).send(error.response.data);
+
+    })
+})
 
 export default router;

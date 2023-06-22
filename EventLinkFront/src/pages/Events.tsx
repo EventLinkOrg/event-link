@@ -1,15 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Card } from "../components/Card";
 import { DropdownCategory } from "../components/DropdownCategory";
 import { NotFound } from "../components/NotFound"; // Import the NotFound component
 import { useEvents } from "../redux/events/useEvents";
 import { Pagination } from "../components/Pagination";
 import { useSearchParams } from "react-router-dom";
+import { TicketModal } from "../components/TicketModal";
+import { EventResponseData } from "../redux/events/events.slice";
+import { useTickets } from "../redux/tickets/useTickets";
+import { useSelf } from "../redux/self/useSelf";
+import { useToken } from "../redux/token/useToken";
+import { AddTicketRequest } from "../redux/tickets/tickets.slice";
 
 const Events = () => {
   const { get, response } = useEvents();
 
+  const { add, add_response, add_state, clear } = useTickets();
+
+  const { response: self_res, state: self_state } = useSelf();
+
+  const { response: token_res, state: token_state } = useToken();
+
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const [selectedEvt, setSelectedEvt] = useState<EventResponseData | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     get({ params: searchParams });
@@ -46,6 +62,28 @@ const Events = () => {
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
+
+  useEffect(() => {
+    if (add_state === "success") {
+      setOpen(false);
+      clear();
+      get({ params: searchParams });
+    }
+  }, [add_state]);
+
+  const submitTicket = useCallback(() => {
+    token_res &&
+      self_res &&
+      selectedEvt !== undefined &&
+      add({
+        ticketPrice: "20",
+        userId: self_res.userId,
+        token: token_res.token,
+        eventId: selectedEvt._id,
+      });
+  }, [token_state === "success" && self_state === "success", selectedEvt]);
+
+  const [open, setOpen] = useState<boolean>(false);
 
   const cardsData = [
     {
@@ -106,6 +144,12 @@ const Events = () => {
               image={card.img}
               title={card.title}
               description={card.textContent}
+              tickets={card.tickets}
+              endDate={card.endDate}
+              onClick={() => {
+                setOpen(true);
+                setSelectedEvt(card);
+              }}
             />
           ))}
         </div>
@@ -121,6 +165,16 @@ const Events = () => {
           />
         </div>
       )}
+      <TicketModal
+        isOpen={open}
+        onClose={() => {
+          setOpen(false);
+          setSelectedEvt(undefined);
+        }}
+        eventData={selectedEvt}
+        loading={add_state === "pending" ? true : false}
+        onSubmit={submitTicket}
+      />
     </div>
   );
 };

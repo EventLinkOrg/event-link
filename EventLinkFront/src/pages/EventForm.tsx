@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { Field, Form } from "react-final-form";
 import { Button } from "../components/Button";
 import { useCategories } from "../redux/categories/useCategories";
+import { Image } from "../redux/events/events.slice";
+import { useEvents } from "../redux/events/useEvents";
+import { useToken } from "../redux/token/useToken";
 
 type EventFormData = {
   title: string;
@@ -11,6 +14,13 @@ type EventFormData = {
   startTime: string;
   endDate: string;
   endTime: string;
+  tickets: string;
+};
+
+const createFormattedDate = (rawDate: string, rawTime: string) => {
+  const date = new Date(`${rawDate}T${rawTime}`);
+  const formattedDate = date.toISOString();
+  return formattedDate;
 };
 
 const required = (value: string | undefined) =>
@@ -31,6 +41,24 @@ const dateValidation = (value: string) => {
   return dateToValidate >= today
     ? undefined
     : "The selected date must be tomorrow or a day in the future";
+};
+
+const ticket_number = (value: string | undefined) => {
+  if (!value) {
+    return "Fill the selected ticket number";
+  }
+  if (typeof parseInt(value) !== "number") {
+    return "The selected ticket number must be a number";
+  }
+  console.log(typeof value);
+  if (parseInt(value) > 500 || parseInt(value) < 0) {
+    return "The selected ticket number must be beetween 1 and 500";
+  }
+  return undefined;
+};
+
+const required_select = (value: string | undefined) => {
+  value || value === "" ? undefined : "Required field";
 };
 
 // const endDateValidation = ({
@@ -86,21 +114,27 @@ const dateValidation = (value: string) => {
 //   return undefined;
 // };
 
-const categories = [
-  {
-    id: "321",
-    name: "Category",
-  },
-  {
-    id: "322",
-    name: "Category2",
-  },
-];
-
 const EventForm = () => {
   const [image, setImage] = useState<string>("");
 
+  const [imageData, setImageData] = useState<Image | undefined>(undefined);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setImage(URL.createObjectURL(e.target.files[0]));
+      const imageData: Image = {
+        name: file.name,
+        data: file,
+        contentType: file.type,
+      };
+      setImageData(imageData);
+    }
+  };
+
   const { response, get } = useCategories();
+  const { add } = useEvents();
+  const { response: token } = useToken();
 
   useEffect(() => {
     get();
@@ -114,14 +148,33 @@ const EventForm = () => {
     startTime,
     endDate,
     endTime,
+    tickets,
   }: EventFormData) => {
-    console.log(title);
-    console.log(category);
-    console.log(textContent);
-    console.log(startDate);
-    console.log(startTime);
-    console.log(endDate);
-    console.log(endTime);
+    if (!category && response) {
+      category = response[0]._id;
+    }
+
+    token &&
+      add({
+        token: token?.token,
+        title,
+        categoryId: category,
+        textContent,
+        startDate: createFormattedDate(startDate, startTime),
+        endDate: createFormattedDate(endDate, endTime),
+        tickets,
+        image: imageData,
+      });
+    // console.log(createFormattedDate(startDate, startTime));
+    // console.log(title);
+    // console.log(category);
+    // console.log(textContent);
+    // console.log(startDate);
+    // console.log(startTime);
+    // console.log(endDate);
+    // console.log(endTime);
+    // console.log(tickets);
+    // console.log(imageData);
   };
 
   return (
@@ -150,7 +203,11 @@ const EventForm = () => {
                 </div>
               )}
             </Field>
-            <Field name="category" component={"select"}>
+            <Field
+              name="category"
+              component={"select"}
+              validate={required_select}
+            >
               {({ input, meta }) => (
                 <div className="form-field">
                   <label className="form-label">Select category</label>
@@ -158,13 +215,13 @@ const EventForm = () => {
                   <select className="select" {...input}>
                     {response &&
                       response.map((category) => (
-                        <option>{category.title}</option>
+                        <option value={category._id}>{category.title}</option>
                       ))}
                   </select>
                   {meta && meta.error && (
                     <label className="form-label">
                       <span className="form-label-alt">
-                        Please enter a valid email.
+                        Please select a category
                       </span>
                     </label>
                   )}
@@ -186,10 +243,7 @@ const EventForm = () => {
                   <input
                     type="file"
                     className="input-file"
-                    onChange={(e) =>
-                      e.target.files &&
-                      setImage(URL.createObjectURL(e.target.files[0]))
-                    }
+                    onChange={handleFileChange}
                   />
                 </div>
               </div>
@@ -312,6 +366,27 @@ const EventForm = () => {
                       or <kbd className="kbd">P</kbd> keys
                     </span>
                   </label>
+                </div>
+              )}
+            </Field>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Field name="tickets" validate={ticket_number}>
+              {({ input, meta }) => (
+                <div className="form-field">
+                  <label className="form-label">Number of Tickets</label>
+
+                  <input
+                    placeholder="Type here"
+                    type="number"
+                    className="input max-w-full"
+                    {...input}
+                  />
+                  {meta && meta.error && (
+                    <label className="form-label">
+                      <span className="form-label-alt">{meta.error}</span>
+                    </label>
+                  )}
                 </div>
               )}
             </Field>

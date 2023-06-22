@@ -103,7 +103,7 @@ public class AuthenticationService {
             EMAIL_ACC,
             EmailBuilder.buildEmail(
                     request.getFirstname(),
-                    EMAIL_LINK
+                    EMAIL_LINK+confirmationToken.getToken()
                     ));
 
     return RegisterResponse.builder()
