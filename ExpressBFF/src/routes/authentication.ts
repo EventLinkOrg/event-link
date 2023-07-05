@@ -1,6 +1,6 @@
 import express from 'express';
 import axios from 'axios';
-import env from '../../env.js';
+import env from '../../env';
 
 const router = express.Router();
 
@@ -11,7 +11,7 @@ router.post('/register', async (req, res, next) => {
         console.log(body)
         const register_res = await axios.post(`${env.UNSECURE_SPRINGBOOT_PATH}/register`, body)
         res.send(register_res.data);
-    } catch (error) {
+    } catch (error: any) {
         res.status(error.response.status).send(error.response.data);
     }
     // const body = req.body;

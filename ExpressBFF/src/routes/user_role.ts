@@ -1,22 +1,21 @@
 import express from 'express';
 import axios from 'axios';
-import env from '../../env.js';
-import { redis } from '../config/jwt_redis_client.js';
-import { getUserDataFromRedis, authMiddleware, parseJsonString } from '../helpers/token_exctractor.js';
-import multer from 'multer';
-
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+import env from '../../env';
+import { redis } from '../config/jwt_redis_client';
+import { getUserDataFromRedis, authMiddleware, parseJsonString } from '../helpers/token_exctractor';
+// // import multer from 'multer';
+// const storage = multer.memoryStorage();
+// const upload = multer({ storage: storage });
 
 const router = express.Router();
 
 router.post('/self', authMiddleware(new Set(['USER'])), async (req, res, next) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
-        const user_data = await getUserDataFromRedis(token);
+        const token = req?.headers?.authorization?.split(' ')[1];
+        const user_data = await getUserDataFromRedis(token!);
 
-        res.send(JSON.parse(parseJsonString(user_data)));
-    } catch (error) {
+        res.send(JSON.parse(parseJsonString(user_data!)));
+    } catch (error: any) {
         return res.status(error.response.status).send(error.response.data);
     }
 })
@@ -112,38 +111,38 @@ router.get('/event', async (req, res) => {
         });
 });
 
-router.post('/event', upload.single('image'), authMiddleware(new Set(['ADMIN', 'SUBSCRIBED USER'])), async (req, res) => {
+// router.post('/event', upload.single('image'), authMiddleware(new Set(['ADMIN', 'SUBSCRIBED USER'])), async (req, res) => {
 
-    const accessToken = req.headers.authorization?.split(' ')[1];
-    const data = await getUserDataFromRedis(accessToken)
-    const jsonData = JSON.parse(parseJsonString(data));
-    // console.log(req.body);
-    // console.log(jsonData);
-    req.body.userId = jsonData.userId;
-    // console.log(req.body.userId)
+//     const accessToken = req.headers.authorization?.split(' ')[1];
+//     const data = await getUserDataFromRedis(accessToken!)
+//     const jsonData = JSON.parse(parseJsonString(data!));
+//     // console.log(req.body);
+//     // console.log(jsonData);
+//     req.body.userId = jsonData.userId;
+//     // console.log(req.body.userId)
 
-    // console.log(req.file)
-    if (req.file) {
-        // req.body.image = req.file
-        console.log(req.file)
-        console.log('file reached')
-    }
+//     // console.log(req.file)
+//     if (req.file) {
+//         // req.body.image = req.file
+//         console.log(req.file)
+//         console.log('file reached')
+//     }
 
-    const formData = {
-        ...req.body,
-        // file: req.file.buffer, // Get the file data from the multer upload
-    };
+//     const formData = {
+//         ...req.body,
+//         // file: req.file.buffer, // Get the file data from the multer upload
+//     };
 
-    console.log(formData)
+//     console.log(formData)
 
-    axios.post(`${env.EXPRESS_SERVER_PATH}/event`, formData, { headers: { Authorization: req.headers.authorization, "Content-Type": 'multipart/form-data', }, params: req.query })
-        .then((response) => {
-            res.send(response.data);
-        })
-        .catch((error) => {
-            res.status(error.response.status).send(error.response.data);
-        });
-});
+//     axios.post(`${env.EXPRESS_SERVER_PATH}/event`, formData, { headers: { Authorization: req.headers.authorization, "Content-Type": 'multipart/form-data', }, params: req.query })
+//         .then((response) => {
+//             res.send(response.data);
+//         })
+//         .catch((error) => {
+//             res.status(error.response.status).send(error.response.data);
+//         });
+// });
 
 router.get('/ticket/:id', authMiddleware(new Set(['USER'])), async (req, res) => {
     axios.get(`${env.EXPRESS_SERVER_PATH}/ticket/user/${req.params.id}`).then((response) => {

@@ -11,7 +11,7 @@
 // });
 
 // export default client;
-import { Redis } from "ioredis";
-import env from "../../env.js";
+import { Redis, RedisOptions } from "ioredis";
+import env from "../../env";
 
-export const redis = new Redis(env.JWT_REDIS_URL);
+export const redis = new Redis(env.JWT_REDIS_URL as RedisOptions);

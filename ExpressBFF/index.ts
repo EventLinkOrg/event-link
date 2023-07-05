@@ -1,9 +1,8 @@
 import express from 'express';
-import env from './env.js';
-import auth from './src/routes/authentication.js';
-import userRole from './src/routes/user_role.js';
+import env from './env';
+import auth from './src/routes/authentication';
+import userRole from './src/routes/user_role';
 import cors from 'cors';
-import multer from 'multer';
 
 const app = express();
 const PORT = env.PORT || 4000;

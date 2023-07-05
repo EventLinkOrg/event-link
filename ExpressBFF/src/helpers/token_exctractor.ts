@@ -1,7 +1,7 @@
-import { redis } from '../config/jwt_redis_client.js';
-import AuthError from './AuthError.js';
+import { redis } from '../config/jwt_redis_client';
+import AuthError from './AuthError';
 
-function parseJsonString(jsonString) {
+function parseJsonString(jsonString: string) {
     const parsedString = jsonString.replace(/\\/g, ''); // Remove all backslashes
     const firstQuoteIndex = parsedString.indexOf('"');
     const lastQuoteIndex = parsedString.lastIndexOf('"');
@@ -12,13 +12,13 @@ function parseJsonString(jsonString) {
     return parsedJson;
 }
 
-const getUserDataFromRedis = async (accessToken) => {
+const getUserDataFromRedis = async (accessToken: string) => {
     const redisKey = `"${accessToken}"`;
     const response = await redis.get(redisKey);
     return response;
 }
 
-const authMiddleware = (authorities) => async (req, res, next) => {
+const authMiddleware = (authorities: Set<{}>) => async (req: any, res: any, next: any) => {
     try {
         const accessToken = req.headers.authorization?.split(' ')[1];
         if (!accessToken) {

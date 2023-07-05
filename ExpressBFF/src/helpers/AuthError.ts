@@ -1,5 +1,8 @@
 class AuthError extends Error {
-    constructor(messages, httpStatus) {
+    httpStatus: number;
+    messages: string[];
+    timestamp: string;
+    constructor(messages: string[], httpStatus: number) {
         super();
         this.messages = messages;
         this.httpStatus = httpStatus;
