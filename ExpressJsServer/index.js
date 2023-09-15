@@ -6,6 +6,8 @@ const mongoose = require('mongoose');  // node modules install dependecies
 const createError = require('http-errors');
 const bodyParser = require('body-parser')
 
+const exc = require('./routes/exc_route');
+
 const category_route = require('./routes/category_route');
 const event_route = require('./routes/event_route');
 const Activeticket_route = require('./routes/active_ticket_route');
@@ -27,10 +29,24 @@ app.use(
     extended: true,
   }),
 )
+
+app.use(express.json())
+app.use(
+  express.urlencoded({
+    extended: false,
+  }),
+)
+app.use(cors({
+  origin: '*',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+}));
+
 app.use('/category', category_route);
 app.use('/event', event_route);
 app.use('/ticket', Activeticket_route);
 app.use('/expiredTicket', Expired_ticket_route);
+app.use('/exc', exc);
 
 // app.use('Event');
 
@@ -51,13 +67,7 @@ so that every request that hits the endpoints,
  their request bodies can be converted to json*/
 
 //if it doesnt work switch to bodyparser
-app.use(express.json())
-app.use(
-  express.urlencoded({
-    extended: false,
-  }),
-)
-app.use(cors());
+
 
 app.listen(
   port,

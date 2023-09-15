@@ -9,9 +9,11 @@ interface CardProps {
   tickets: number;
   endDate: string;
   onClick: () => void;
+  loading?: boolean;
 }
 
 const Card: React.FC<CardProps> = ({
+  loading = true,
   image,
   title,
   description,
@@ -31,10 +33,15 @@ const Card: React.FC<CardProps> = ({
 
   return (
     <div className="card card-image-cover">
-      <img
-        src={imageData || "https://source.unsplash.com/random/300x200"}
-        alt=""
-      />
+      {loading ? (
+        <div className="skeleton h-64 card-body"></div>
+      ) : (
+        <img
+          src={imageData || "https://source.unsplash.com/random/300x200"}
+          alt=""
+        />
+      )}
+
       <div className="card-body">
         <h2 className="card-header">
           {title}{" "}

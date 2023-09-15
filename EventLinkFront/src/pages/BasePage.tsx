@@ -6,7 +6,11 @@ const BasePage = () => {
   return (
     <div className="bg-slate-500">
       <Navbar />
-      <Outlet />
+
+      {/* Same as */}
+      <div className="flex justify-center items-center">
+        <Outlet />
+      </div>
       <Footer />
     </div>
   );

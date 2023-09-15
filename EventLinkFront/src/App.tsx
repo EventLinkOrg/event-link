@@ -18,13 +18,13 @@ function App() {
   const { set_token, state: token_state } = useToken();
   const [token, setToken, remove] = useLocalStorage(TOKEN_KEY);
 
-  const fetchtest = async () => {
-    const user = await trpc.user.get.query();
-    console.log(user);
-  };
+  // const fetchtest = async () => {
+  //   const user = await trpc.user.get.query();
+  //   console.log(user);
+  // };
 
   useEffect(() => {
-    fetchtest();
+    // fetchtest();
     if (self_state === "error") {
       remove();
     }

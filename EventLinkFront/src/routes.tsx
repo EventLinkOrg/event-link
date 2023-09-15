@@ -12,6 +12,8 @@ import { Navigate } from "react-router-dom";
 import { EventForm } from "./pages/EventForm";
 import { UserEvents } from "./pages/UserEvents";
 import { UserTickets } from "./pages/UserTickets";
+import { Exc } from "./exc/Exc";
+import { Transaksioni } from "./exc/Transaksioni";
 
 const routes = [
   {
@@ -22,6 +24,8 @@ const routes = [
         path: "",
         element: <Home />,
       },
+      { path: "/exc", element: <Exc /> },
+      { path: "/trans", element: <Transaksioni /> },
       {
         path: "sign-in",
         element: <SignIn />,

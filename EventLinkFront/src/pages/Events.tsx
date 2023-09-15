@@ -13,7 +13,7 @@ import { useToken } from "../redux/token/useToken";
 import { AddTicketRequest } from "../redux/tickets/tickets.slice";
 
 const Events = () => {
-  const { get, response } = useEvents();
+  const { get, response, state } = useEvents();
 
   const { add, add_response, add_state, clear } = useTickets();
 
@@ -146,6 +146,7 @@ const Events = () => {
               description={card.textContent}
               tickets={card.tickets}
               endDate={card.endDate}
+              loading={state === "pending"}
               onClick={() => {
                 setOpen(true);
                 setSelectedEvt(card);

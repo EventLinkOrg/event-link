@@ -16,10 +16,11 @@ const Home = () => {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="eventlink-intro flex items-center">EventLink is a platform</div>
-      <div className="divider"></div>
+      <div className="eventlink-intro flex items-center">
+        EventLink is a platform
+      </div>
+
       <div className="flex items-center">hello there</div>
-      
     </div>
   );
 };
