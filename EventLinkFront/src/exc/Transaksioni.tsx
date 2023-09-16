@@ -14,7 +14,7 @@ type Transaksioni = {
 const get_transaksioni = async () => {
   try {
     const res = await axios.get("http://localhost:8000/exc/trans");
-    return res.data;
+    return res.data as any[];
   } catch (err) {
     console.log(err);
   }
@@ -41,10 +41,15 @@ const get_transaksioni_by_id = async (param: { id: string }) => {
   }
 };
 
-const update_transaksioni = async (body: { name: string; id: string }) => {
+const update_transaksioni = async (body: {
+  name: string;
+  id: string;
+  llogaria_ID: string;
+}) => {
   try {
     const res = await axios.put(`http://localhost:8000/exc/trans/${body.id}`, {
       name: body.name,
+      llogaria_ID: body.llogaria_ID,
     });
     return res.data;
   } catch (err) {
@@ -70,7 +75,9 @@ const initialState1: Llogaria = { name: "", _id: "" };
 const Transaksioni = () => {
   const [llogarite, setLlogarite] = useState<Llogaria[]>([]);
   const [llogaria, setLlogaria] = useState<Llogaria>(initialState1);
-  const [transaksionet, setTransaksionet] = useState<Transaksioni[]>([]);
+  const [transaksionet, setTransaksionet] = useState<
+    Transaksioni[] | undefined
+  >([]);
   const [refetch, setRefetch] = useState<boolean>(false);
   const [transaksioni, setTransaksioni] = useState<Transaksioni>(initialState);
 
@@ -94,8 +101,13 @@ const Transaksioni = () => {
     setTransaksioni(input);
   };
 
-  const onEdit = (input: Transaksioni) => {
-    update_transaksioni({ name: input.name, id: input._id });
+  const onEdit = (input: any) => {
+    console.log(input);
+    update_transaksioni({
+      name: input.name,
+      id: input._id,
+      llogaria_ID: llogaria._id,
+    });
     setRefetch(true);
     setOpen(false);
   };
@@ -128,7 +140,18 @@ const Transaksioni = () => {
   }, [llogaria]);
 
   useEffect(() => {
-    get_transaksioni().then((transaksioni) => setTransaksionet(transaksioni));
+    get_llogaria().then((data: any[]) => {
+      get_transaksioni().then((transaksioni) => {
+        const list = transaksioni?.map((t) => {
+          const llog = data.filter((l: Llogaria) => l._id === t.llogaria_ID);
+          t.llogaria = llog.length === 0 ? "" : llog[0].name;
+          return t;
+        });
+        console.log(list);
+        setTransaksionet(list);
+      });
+    });
+
     setRefetch(false);
   }, [refetch]);
 
@@ -148,6 +171,7 @@ const Transaksioni = () => {
         }}
         loading={false}
       >
+        <span>Name</span>
         <input
           className="input"
           placeholder="Name"
@@ -156,6 +180,15 @@ const Transaksioni = () => {
             setTransaksioni({ ...transaksioni, name: e.target.value })
           }
         />
+        <span>LLogaria</span>
+        <select
+          className="select"
+          value={llogaria.name}
+          onChange={handleChange}
+        >
+          {llogarite &&
+            llogarite.map((x) => <option key={x._id}>{x.name}</option>)}
+        </select>
       </Modal>
 
       {/* delete modal */}
@@ -205,7 +238,7 @@ const Transaksioni = () => {
       <Button text="Create" onClick={() => openCreate(initialState)} />
       <div className="">
         <Table
-          header={["name"]}
+          header={["name", "llogaria"]}
           rows={transaksionet}
           editClick={openEdit}
           deleteClick={openDelete}
